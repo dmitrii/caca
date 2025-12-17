@@ -259,7 +259,8 @@ def validate_run_config_file(config_path: Path) -> list[ValidationError]:
                         file_path=str(plan_path),
                     ))
 
-    # Check profile files exist and are valid
+    # Check profile files exist and are valid, and check for duplicate names
+    person_names: dict[str, str] = {}
     for profile_path_str in raw.get("people", []):
         profile_path = Path(profile_path_str)
         if not profile_path.exists():
@@ -273,6 +274,15 @@ def validate_run_config_file(config_path: Path) -> list[ValidationError]:
                     profile_data = yaml.safe_load(f)
                     if profile_data:
                         errors.extend(validate_profile(profile_data, str(profile_path)))
+                        # Check for duplicate person names
+                        name = profile_data.get("name", "")
+                        if name in person_names:
+                            errors.append(ValidationError(
+                                message=f"Duplicate person name '{name}'. First defined in: {person_names[name]}",
+                                file_path=str(profile_path),
+                            ))
+                        else:
+                            person_names[name] = str(profile_path)
                 except yaml.YAMLError as e:
                     errors.append(ValidationError(
                         message=f"Invalid YAML: {e}",
