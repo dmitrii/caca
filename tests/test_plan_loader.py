@@ -44,7 +44,7 @@ primary_care_visit_after_deductible,20
         assert len(plans) == 1
         plan = plans[0]
         assert plan.name == "test_plan"
-        assert plan.premium == 1000.0
+        assert plan.premium == 12000.0  # monthly premium * 12
         assert plan.deductible_individual == 2000.0
         assert plan.deductible_family == 4000.0
         assert plan.oop_max_individual == 5000.0
@@ -64,8 +64,8 @@ oop_max_family,10000,6000
         assert len(plans) == 2
         assert plans[0].name == "plan_a"
         assert plans[1].name == "plan_b"
-        assert plans[0].premium == 1000.0
-        assert plans[1].premium == 2000.0
+        assert plans[0].premium == 12000.0  # monthly premium * 12
+        assert plans[1].premium == 24000.0  # monthly premium * 12
 
     def test_coinsurance_value(self):
         csv_content = """plan_name,test_plan
