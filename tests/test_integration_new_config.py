@@ -2,6 +2,7 @@
 
 import pytest
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -10,7 +11,7 @@ class TestNewConfigIntegration:
         """Validate command works on plans/profiles/costs directories."""
         # This test assumes the directories have been populated
         result = subprocess.run(
-            ["python", "-m", "caca.cli", "validate", "plans/", "profiles/", "costs/"],
+            [sys.executable, "-m", "caca.cli", "validate", "plans/", "profiles/", "costs/"],
             capture_output=True,
             text=True,
         )
@@ -24,7 +25,7 @@ class TestNewConfigIntegration:
             pytest.skip("Example config not found")
 
         result = subprocess.run(
-            ["python", "-m", "caca.cli", "gen", str(example_config), "--quiet"],
+            [sys.executable, "-m", "caca.cli", "gen", str(example_config), "--quiet"],
             capture_output=True,
             text=True,
         )
