@@ -23,6 +23,24 @@ REQUIRED_PLAN_FIELDS = [
     "oop_max_family",
 ]
 
+# All service types that must have cost-sharing rules defined
+REQUIRED_SERVICE_FIELDS = [
+    "preventative_visit",
+    "primary_care_visit",
+    "specialist_visit",
+    "labs",
+    "imaging",
+    "outpatient_services",
+    "outpatient_rehabilitation_services",
+    "inpatient_services",
+    "emergency_room",
+    "urgent_care",
+    "tier_1_generic_drugs",
+    "tier_2_preferred_brand_drugs",
+    "tier_3_non_preferred_brand_drugs",
+    "tier_4_specialty_drugs",
+]
+
 COINSURANCE_FIELDS = [
     "outpatient_services",
     "outpatient_services_after_deductible",
@@ -40,6 +58,20 @@ def validate_plan(data: dict[str, Any], file_path: str) -> list[ValidationError]
         if field not in data or data[field] is None:
             errors.append(ValidationError(
                 message=f"Missing required field '{field}'",
+                file_path=file_path,
+            ))
+
+    # Check all service types have cost-sharing rules (before and after deductible)
+    for service in REQUIRED_SERVICE_FIELDS:
+        if service not in data:
+            errors.append(ValidationError(
+                message=f"Missing cost-sharing rule for '{service}'",
+                file_path=file_path,
+            ))
+        after_key = f"{service}_after_deductible"
+        if after_key not in data:
+            errors.append(ValidationError(
+                message=f"Missing cost-sharing rule for '{after_key}'",
                 file_path=file_path,
             ))
 

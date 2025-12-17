@@ -12,55 +12,90 @@ from caca.validation import (
 )
 
 
+def complete_plan_data(**overrides):
+    """Return a complete valid plan data dict, with optional overrides."""
+    data = {
+        "plan_name": "Test Plan",
+        "premium": 500,
+        "deductible_individual": 1000,
+        "deductible_family": 2000,
+        "oop_max_individual": 5000,
+        "oop_max_family": 10000,
+        # All required service fields (before deductible)
+        "preventative_visit": 0,
+        "primary_care_visit": 50,
+        "specialist_visit": 100,
+        "labs": 50,
+        "imaging": 200,
+        "outpatient_services": 0.3,
+        "outpatient_rehabilitation_services": 50,
+        "inpatient_services": 0.3,
+        "emergency_room": 300,
+        "urgent_care": 50,
+        "tier_1_generic_drugs": 15,
+        "tier_2_preferred_brand_drugs": 50,
+        "tier_3_non_preferred_brand_drugs": 100,
+        "tier_4_specialty_drugs": 0.2,
+        # All required service fields (after deductible)
+        "preventative_visit_after_deductible": 0,
+        "primary_care_visit_after_deductible": 50,
+        "specialist_visit_after_deductible": 100,
+        "labs_after_deductible": 50,
+        "imaging_after_deductible": 200,
+        "outpatient_services_after_deductible": 0.3,
+        "outpatient_rehabilitation_services_after_deductible": 50,
+        "inpatient_services_after_deductible": 0.3,
+        "emergency_room_after_deductible": 300,
+        "urgent_care_after_deductible": 50,
+        "tier_1_generic_drugs_after_deductible": 15,
+        "tier_2_preferred_brand_drugs_after_deductible": 50,
+        "tier_3_non_preferred_brand_drugs_after_deductible": 100,
+        "tier_4_specialty_drugs_after_deductible": 0.2,
+    }
+    data.update(overrides)
+    return data
+
+
 class TestValidatePlan:
     def test_valid_plan_passes(self):
-        plan_data = {
-            "plan_name": "Test Plan",
-            "premium": 500,
-            "deductible_individual": 1000,
-            "deductible_family": 2000,
-            "oop_max_individual": 5000,
-            "oop_max_family": 10000,
-        }
+        plan_data = complete_plan_data()
         errors = validate_plan(plan_data, "test.yaml")
         assert errors == []
 
     def test_missing_required_field(self):
-        plan_data = {
-            "plan_name": "Test Plan",
-            "premium": 500,
-            # missing deductible_individual
-            "deductible_family": 2000,
-            "oop_max_individual": 5000,
-            "oop_max_family": 10000,
-        }
+        plan_data = complete_plan_data()
+        del plan_data["deductible_individual"]
         errors = validate_plan(plan_data, "test.yaml")
         assert len(errors) == 1
         assert "deductible_individual" in errors[0].message
 
+    def test_missing_service_field(self):
+        plan_data = complete_plan_data()
+        del plan_data["primary_care_visit"]
+        errors = validate_plan(plan_data, "test.yaml")
+        assert len(errors) == 1
+        assert "primary_care_visit" in errors[0].message
+
+    def test_missing_after_deductible_field(self):
+        plan_data = complete_plan_data()
+        del plan_data["specialist_visit_after_deductible"]
+        errors = validate_plan(plan_data, "test.yaml")
+        assert len(errors) == 1
+        assert "specialist_visit_after_deductible" in errors[0].message
+
     def test_deductible_exceeds_oop_max(self):
-        plan_data = {
-            "plan_name": "Test Plan",
-            "premium": 500,
-            "deductible_individual": 10000,  # exceeds oop_max
-            "deductible_family": 2000,
-            "oop_max_individual": 5000,
-            "oop_max_family": 10000,
-        }
+        plan_data = complete_plan_data(
+            deductible_individual=10000,  # exceeds oop_max
+            oop_max_individual=5000,
+        )
         errors = validate_plan(plan_data, "test.yaml")
         assert len(errors) == 1
         assert "exceeds" in errors[0].message.lower()
 
     def test_invalid_coinsurance(self):
-        plan_data = {
-            "plan_name": "Test Plan",
-            "premium": 500,
-            "deductible_individual": 1000,
-            "deductible_family": 2000,
-            "oop_max_individual": 5000,
-            "oop_max_family": 10000,
-            "outpatient_services": 1.5,  # invalid: > 1
-        }
+        plan_data = complete_plan_data(
+            outpatient_services=1.5,  # invalid: > 1 but < 2
+        )
         errors = validate_plan(plan_data, "test.yaml")
         assert len(errors) == 1
         assert "coinsurance" in errors[0].message.lower()
