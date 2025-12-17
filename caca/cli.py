@@ -36,6 +36,16 @@ def parse_args(args: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Suppress terminal output (use with --json)",
     )
+    parser.add_argument(
+        "--breakdown",
+        help="Show cost breakdown by service type for a specific plan",
+    )
+    parser.add_argument(
+        "--histogram-width",
+        type=int,
+        default=79,
+        help="Width of histogram in characters (default: 79)",
+    )
 
     return parser.parse_args(args)
 
@@ -107,7 +117,7 @@ def main() -> None:
 
     # Terminal output
     if not args.quiet:
-        renderer = TerminalRenderer()
+        renderer = TerminalRenderer(histogram_width=args.histogram_width)
         renderer.render_full_report(
             sys.stdout,
             config["household"],
@@ -117,6 +127,28 @@ def main() -> None:
             results.summary,
             plan_costs,
         )
+
+        # Breakdown for specific plan
+        if args.breakdown:
+            # Find matching plan (case-insensitive partial match)
+            matching_plan = None
+            for plan in plans:
+                if args.breakdown.lower() in plan.name.lower():
+                    matching_plan = plan
+                    break
+
+            if matching_plan:
+                renderer.render_breakdown(
+                    sys.stdout,
+                    matching_plan.name,
+                    results.scenarios,
+                    matching_plan.premium,
+                    plan_rules=matching_plan,
+                    highlight_thresholds=config["defaults"]["highlight_thresholds"],
+                )
+            else:
+                print(f"\nWarning: No plan found matching '{args.breakdown}'", file=sys.stderr)
+                print(f"Available plans: {', '.join(p.name for p in plans)}", file=sys.stderr)
 
     # JSON output
     if args.json:

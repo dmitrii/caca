@@ -113,15 +113,28 @@ def load_config(file: TextIO) -> dict:
 
     config = {
         "simulation": raw.get("simulation", {}),
-        "defaults": {"costs": {}},
+        "defaults": {
+            "costs": {},
+            "highlight_thresholds": {
+                "high_copay": 50,
+                "high_deductible": 2000,
+            },
+        },
         "profiles": {},
         "household": raw.get("household", []),
     }
 
-    # Process default costs
-    if "defaults" in raw and "costs" in raw["defaults"]:
-        for service, cost in raw["defaults"]["costs"].items():
-            config["defaults"]["costs"][service] = parse_cost_range(cost)
+    # Process defaults section
+    if "defaults" in raw:
+        # Costs
+        if "costs" in raw["defaults"]:
+            for service, cost in raw["defaults"]["costs"].items():
+                config["defaults"]["costs"][service] = parse_cost_range(cost)
+
+        # Highlight thresholds
+        if "highlight_thresholds" in raw["defaults"]:
+            for key, value in raw["defaults"]["highlight_thresholds"].items():
+                config["defaults"]["highlight_thresholds"][key] = value
 
     # Process profiles
     if "profiles" in raw:
