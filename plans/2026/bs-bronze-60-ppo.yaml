@@ -1,0 +1,39 @@
+# PURPOSE: BS Bronze 60 PPO plan parameters
+
+plan_name: BS Bronze 60 PPO
+premium: 2317.96
+deductible_individual: 5800
+deductible_family: 11600
+deductible_rx_individual: 450
+deductible_rx_family: 900
+oop_max_individual: 9800
+oop_max_family: 19600
+oop_max_per_rx: 500
+preventative_visit: 0
+preventative_visit_after_deductible: 0
+primary_care_visit: 60
+primary_care_visit_after_deductible: 60
+specialist_visit: 1
+specialist_visit_after_deductible: 95
+labs: 50
+labs_after_deductible: 50
+imaging: 1
+imaging_after_deductible: 0.4
+outpatient_services: 1
+outpatient_services_after_deductible: 0.4
+outpatient_rehabilitation_services: 60
+outpatient_rehabilitation_services_after_deductible: 60
+inpatient_services: 1
+inpatient_services_after_deductible: 0.4
+emergency_room: 1
+emergency_room_after_deductible: 0.4
+urgent_care: 60
+urgent_care_after_deductible: 60
+tier_1_generic_drugs: 20
+tier_1_generic_drugs_after_deductible: 20
+tier_2_preferred_brand_drugs: 1
+tier_2_preferred_brand_drugs_after_deductible: 0.4
+tier_3_non_preferred_brand_drugs: 1
+tier_3_non_preferred_brand_drugs_after_deductible: 0.4
+tier_4_specialty_drugs: 1
+tier_4_specialty_drugs_after_deductible: 0.4

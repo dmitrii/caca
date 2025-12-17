@@ -1,0 +1,39 @@
+# PURPOSE: BS Silver 70 PPO plan parameters
+
+plan_name: BS Silver 70 PPO
+premium: 2861.94
+deductible_individual: 5200
+deductible_family: 10400
+deductible_rx_individual: 50
+deductible_rx_family: 100
+oop_max_individual: 9800
+oop_max_family: 19600
+oop_max_per_rx: 250
+preventative_visit: 0
+preventative_visit_after_deductible: 0
+primary_care_visit: 50
+primary_care_visit_after_deductible: 50
+specialist_visit: 90
+specialist_visit_after_deductible: 90
+labs: 50
+labs_after_deductible: 50
+imaging: 325
+imaging_after_deductible: 325
+outpatient_services: 0.3
+outpatient_services_after_deductible: 0.3
+outpatient_rehabilitation_services: 50
+outpatient_rehabilitation_services_after_deductible: 50
+inpatient_services: 1
+inpatient_services_after_deductible: 0.3
+emergency_room: 400
+emergency_room_after_deductible: 400
+urgent_care: 50
+urgent_care_after_deductible: 50
+tier_1_generic_drugs: 19
+tier_1_generic_drugs_after_deductible: 19
+tier_2_preferred_brand_drugs: 1
+tier_2_preferred_brand_drugs_after_deductible: 60
+tier_3_non_preferred_brand_drugs: 1
+tier_3_non_preferred_brand_drugs_after_deductible: 90
+tier_4_specialty_drugs: 1
+tier_4_specialty_drugs_after_deductible: 0.2

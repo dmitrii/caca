@@ -1,0 +1,38 @@
+# PURPOSE: BS PERS Gold PPO plan parameters
+
+plan_name: BS PERS Gold PPO
+premium: 2660.21
+deductible_individual: 1000
+deductible_family: 2000
+oop_max_individual: 3000
+oop_max_family: 6000
+oop_max_rx_individual: 2000
+oop_max_rx_family: 4000
+preventative_visit: 0
+preventative_visit_after_deductible: 0
+primary_care_visit: 10
+primary_care_visit_after_deductible: 10
+specialist_visit: 35
+specialist_visit_after_deductible: 35
+labs: 1
+labs_after_deductible: 0.2
+imaging: 1
+imaging_after_deductible: 0.2
+outpatient_services: 1
+outpatient_services_after_deductible: 0.2
+outpatient_rehabilitation_services: 1
+outpatient_rehabilitation_services_after_deductible: 0.2
+inpatient_services: 1
+inpatient_services_after_deductible: 0.2
+emergency_room: 1
+emergency_room_after_deductible: 0.2
+urgent_care: 35
+urgent_care_after_deductible: 35
+tier_1_generic_drugs: 5
+tier_1_generic_drugs_after_deductible: 5
+tier_2_preferred_brand_drugs: 20
+tier_2_preferred_brand_drugs_after_deductible: 20
+tier_3_non_preferred_brand_drugs: 50
+tier_3_non_preferred_brand_drugs_after_deductible: 50
+tier_4_specialty_drugs: 50
+tier_4_specialty_drugs_after_deductible: 50

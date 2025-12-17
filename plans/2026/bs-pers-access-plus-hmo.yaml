@@ -1,0 +1,40 @@
+# PURPOSE: BS PERS Access+ HMO plan parameters
+
+plan_name: BS PERS Access+ HMO
+premium: 3110.19
+deductible_individual: 0
+deductible_family: 0
+deductible_rx_individual: 0
+deductible_rx_family: 0
+oop_max_individual: 1500
+oop_max_family: 3000
+oop_max_rx_individual: 8650
+oop_max_rx_family: 17300
+preventative_visit: 0
+preventative_visit_after_deductible: 0
+primary_care_visit: 15
+primary_care_visit_after_deductible: 15
+specialist_visit: 30
+specialist_visit_after_deductible: 30
+labs: 0
+labs_after_deductible: 0
+imaging: 0
+imaging_after_deductible: 0
+outpatient_services: 0
+outpatient_services_after_deductible: 0
+outpatient_rehabilitation_services: 10
+outpatient_rehabilitation_services_after_deductible: 10
+inpatient_services: 0
+inpatient_services_after_deductible: 0
+emergency_room: 50
+emergency_room_after_deductible: 50
+urgent_care: 15
+urgent_care_after_deductible: 15
+tier_1_generic_drugs: 5
+tier_1_generic_drugs_after_deductible: 5
+tier_2_preferred_brand_drugs: 20
+tier_2_preferred_brand_drugs_after_deductible: 20
+tier_3_non_preferred_brand_drugs: 50
+tier_3_non_preferred_brand_drugs_after_deductible: 50
+tier_4_specialty_drugs: 30
+tier_4_specialty_drugs_after_deductible: 30
