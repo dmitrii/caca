@@ -44,6 +44,7 @@ SERVICE_TYPE_MAP = {
     "tier_2_preferred_brand_drugs": ServiceType.TIER_2_PREFERRED_BRAND_DRUGS,
     "tier_3_non_preferred_brand_drugs": ServiceType.TIER_3_NON_PREFERRED_BRAND_DRUGS,
     "tier_4_specialty_drugs": ServiceType.TIER_4_SPECIALTY_DRUGS,
+    "outpatient_rehabilitation_services": ServiceType.OUTPATIENT_REHABILITATION_SERVICES,
 }
 
 
@@ -90,9 +91,11 @@ def load_plans(file: TextIO) -> list[PlanRules]:
             if after_key in data and data[after_key] is not None:
                 service_costs_after_deductible[service_type] = data[after_key]
 
+        # Premium in CSV is monthly; convert to annual
+        monthly_premium = data.get("premium") or 0.0
         plan = PlanRules(
             name=data.get("plan_name") or f"plan_{i}",
-            premium=data.get("premium") or 0.0,
+            premium=monthly_premium * 12,
             deductible_individual=data.get("deductible_individual") or 0.0,
             deductible_family=data.get("deductible_family") or 0.0,
             oop_max_individual=data.get("oop_max_individual") or 0.0,

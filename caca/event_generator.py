@@ -21,6 +21,7 @@ SERVICE_NAME_MAP = {
     "tier_2_preferred_brand_drugs": ServiceType.TIER_2_PREFERRED_BRAND_DRUGS,
     "tier_3_non_preferred_brand_drugs": ServiceType.TIER_3_NON_PREFERRED_BRAND_DRUGS,
     "tier_4_specialty_drugs": ServiceType.TIER_4_SPECIALTY_DRUGS,
+    "outpatient_rehabilitation_services": ServiceType.OUTPATIENT_REHABILITATION_SERVICES,
     "uncovered": ServiceType.UNCOVERED,
 }
 
