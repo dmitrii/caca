@@ -1,0 +1,44 @@
+# Blue Shield Gold 80 Trio HMO
+# Source: CoveredCA 2025 plan year
+
+plan_name: BS Gold 80 Trio HMO
+plan_url: https://apply.coveredca.com/static/lw-enrollment/anon/plan-details/health/jsAXtf4on1_vOitQNqpILHGR0oUlQWN3x8HlzJiFTiM/70285CA804000601
+
+premium: 2740.21
+
+deductible_individual: 0
+deductible_family: 0
+
+oop_max_individual: 9200
+oop_max_family: 18400
+oop_max_per_rx: 250
+
+preventative_visit: 0
+primary_care_visit: 40
+specialist_visit: 70
+labs: 40
+imaging: 75
+outpatient_services: 0.2
+outpatient_rehabilitation_services: 40
+inpatient_services: 375
+emergency_room: 350
+urgent_care: 40
+tier_1_generic_drugs: 18
+tier_2_preferred_brand_drugs: 60
+tier_3_non_preferred_brand_drugs: 85
+tier_4_specialty_drugs: 0.2
+
+preventative_visit_after_deductible: 0
+primary_care_visit_after_deductible: 40
+specialist_visit_after_deductible: 70
+labs_after_deductible: 40
+imaging_after_deductible: 75
+outpatient_services_after_deductible: 0.2
+outpatient_rehabilitation_services_after_deductible: 40
+inpatient_services_after_deductible: 375
+emergency_room_after_deductible: 350
+urgent_care_after_deductible: 40
+tier_1_generic_drugs_after_deductible: 18
+tier_2_preferred_brand_drugs_after_deductible: 60
+tier_3_non_preferred_brand_drugs_after_deductible: 85
+tier_4_specialty_drugs_after_deductible: 0.2
