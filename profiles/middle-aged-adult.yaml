@@ -1,0 +1,20 @@
+# Middle-aged adult (40s-50s)
+# Regular checkups, some ongoing prescriptions, occasional specialist
+
+name: middle_aged_adult
+
+preventative_visit: 1
+primary_care_visit: 3-4
+specialist_visit: 1-2
+labs: 2-4
+imaging:
+  probability: 0.3
+  count: 1
+tier_1_generic_drugs: 12-24
+tier_2_preferred_brand_drugs: 6-12
+urgent_care:
+  probability: 0.15
+  count: 1
+emergency_room:
+  probability: 0.05
+  count: 1

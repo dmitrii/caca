@@ -1,0 +1,19 @@
+# Adult with chronic condition (e.g., diabetes, hypertension)
+# Regular monitoring, specialist visits, multiple prescriptions
+
+name: chronic_condition
+
+preventative_visit: 1
+primary_care_visit: 4-6
+specialist_visit: 4-6
+labs: 6-8
+imaging: 1-2
+tier_1_generic_drugs: 36-48
+tier_2_preferred_brand_drugs: 12-24
+tier_3_non_preferred_brand_drugs: 0-6
+urgent_care:
+  probability: 0.25
+  count: 1
+emergency_room:
+  probability: 0.1
+  count: 1

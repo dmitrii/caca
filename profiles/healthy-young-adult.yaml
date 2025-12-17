@@ -1,0 +1,14 @@
+# Healthy young adult (20s-30s)
+# Minimal healthcare usage - annual checkup and occasional illness
+
+name: healthy_young_adult
+
+preventative_visit: 1
+primary_care_visit: 1-2
+tier_1_generic_drugs: 2-4
+urgent_care:
+  probability: 0.2
+  count: 1
+emergency_room:
+  probability: 0.05
+  count: 1
