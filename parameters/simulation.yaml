@@ -1,0 +1,5 @@
+# Simulation parameters
+iterations: auto
+convergence_threshold_dollars: 100
+max_iterations: 100000
+min_iterations: 1000
