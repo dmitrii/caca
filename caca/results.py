@@ -63,6 +63,19 @@ class ResultsStore:
                         result.oop_max_hit_date.isoformat()
                         if result.oop_max_hit_date else None
                     ),
+                    "event_costs": [
+                        {
+                            "service_type": ec.event.service_type.value,
+                            "date": ec.event.date.isoformat(),
+                            "person": ec.event.person,
+                            "description": ec.event.description,
+                            "provider_cost": ec.provider_cost,
+                            "patient_cost": ec.patient_cost,
+                            "plan_cost": ec.plan_cost,
+                            "deductible_applied": ec.deductible_applied,
+                        }
+                        for ec in result.event_costs
+                    ],
                 }
                 for name, result in scenario.plan_results.items()
             },

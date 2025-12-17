@@ -1,7 +1,7 @@
 # PURPOSE: Calculate costs for healthcare events under a plan's rules
 
 from datetime import date
-from caca.models import Event, ServiceType, PlanRules, PlanResult
+from caca.models import Event, EventCost, ServiceType, PlanRules, PlanResult
 
 
 class PlanCalculator:
@@ -24,11 +24,19 @@ class PlanCalculator:
         total_oop = 0.0
         deductible_hit_date: date | None = None
         oop_max_hit_date: date | None = None
+        event_costs: list[EventCost] = []
 
         for event in events:
             # Handle uncovered services - bypass all plan rules
             if event.service_type == ServiceType.UNCOVERED:
                 total_oop += event.cost
+                event_costs.append(EventCost(
+                    event=event,
+                    provider_cost=event.cost,
+                    patient_cost=event.cost,
+                    plan_cost=0.0,
+                    deductible_applied=0.0,
+                ))
                 continue
 
             person = event.person
@@ -70,8 +78,9 @@ class PlanCalculator:
             oop_max_met = individual_oop_met or family_oop_met
 
             if oop_max_met:
-                # No more costs
+                # No more costs - plan pays everything
                 patient_cost = 0.0
+                deductible_contribution = 0.0
             else:
                 # Calculate patient cost for this event
                 patient_cost = self._calculate_event_cost(
@@ -86,16 +95,30 @@ class PlanCalculator:
                 remaining_fam_oop = fam_oop_max - family_oop_total
                 patient_cost = min(patient_cost, remaining_ind_oop, remaining_fam_oop)
 
+                # Calculate deductible contribution for this event
+                if not deductible_met:
+                    deductible_contribution = min(
+                        patient_cost,
+                        ind_deductible - deductible_spent[person],
+                    )
+                else:
+                    deductible_contribution = 0.0
+
+            # Build EventCost record
+            event_costs.append(EventCost(
+                event=event,
+                provider_cost=event.cost,
+                patient_cost=patient_cost,
+                plan_cost=event.cost - patient_cost,
+                deductible_applied=deductible_contribution,
+            ))
+
             # Update tracking
             total_oop += patient_cost
             oop_spent[person] += patient_cost
 
             # Update deductible tracking (only count toward deductible if not yet met)
-            if not deductible_met:
-                deductible_contribution = min(
-                    patient_cost,
-                    ind_deductible - deductible_spent[person],
-                )
+            if not deductible_met and deductible_contribution > 0:
                 deductible_spent[person] += deductible_contribution
 
                 # Check if we just hit deductible
@@ -118,6 +141,7 @@ class PlanCalculator:
             out_of_pocket=total_oop,
             deductible_hit_date=deductible_hit_date,
             oop_max_hit_date=oop_max_hit_date,
+            event_costs=event_costs,
         )
 
     def _calculate_event_cost(

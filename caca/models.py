@@ -22,6 +22,7 @@ class ServiceType(Enum):
     TIER_2_PREFERRED_BRAND_DRUGS = "tier_2_preferred_brand_drugs"
     TIER_3_NON_PREFERRED_BRAND_DRUGS = "tier_3_non_preferred_brand_drugs"
     TIER_4_SPECIALTY_DRUGS = "tier_4_specialty_drugs"
+    OUTPATIENT_REHABILITATION_SERVICES = "outpatient_rehabilitation_services"
     UNCOVERED = "uncovered"
 
     def is_drug(self) -> bool:
@@ -100,6 +101,17 @@ class PlanRules:
 
 
 @dataclass
+class EventCost:
+    """Cost breakdown for a single event under a specific plan."""
+
+    event: Event
+    provider_cost: float  # what was billed (same as event.cost)
+    patient_cost: float  # what patient paid (OOP for this event)
+    plan_cost: float  # what plan paid
+    deductible_applied: float  # portion that went toward deductible
+
+
+@dataclass
 class PlanResult:
     """Result of running one scenario through one plan."""
 
@@ -108,6 +120,7 @@ class PlanResult:
     out_of_pocket: float
     deductible_hit_date: Optional[date]
     oop_max_hit_date: Optional[date]
+    event_costs: list[EventCost] = field(default_factory=list)
 
 
 @dataclass
