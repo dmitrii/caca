@@ -1,0 +1,17 @@
+# Healthcare service costs for California, 2026
+# Ranges represent typical billed amounts before insurance
+
+preventative_visit: 0
+primary_care_visit: 150-300
+specialist_visit: 200-500
+labs: 100-500
+imaging: 500-2500
+outpatient_services: 2000-15000
+outpatient_rehabilitation_services: 100-300
+inpatient_services: 15000-75000
+emergency_room: 1500-5000
+urgent_care: 150-400
+tier_1_generic_drugs: 10-50
+tier_2_preferred_brand_drugs: 50-200
+tier_3_non_preferred_brand_drugs: 150-500
+tier_4_specialty_drugs: 500-2000
