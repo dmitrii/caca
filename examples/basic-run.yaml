@@ -6,9 +6,9 @@ simulation: parameters/simulation.yaml
 costs: costs/2026-california.yaml
 
 plans:
-  - plans/2026/bs-bronze-60-hdhp-ppo.yaml
-  - plans/2026/bs-silver-70-trio-hmo.yaml
-  - plans/2026/bs-gold-80-trio-hmo.yaml
+  - plans/2026/bs-aca-bronze-60-hdhp-ppo.yaml
+  - plans/2026/bs-aca-silver-70-trio-hmo.yaml
+  - plans/2026/bs-aca-gold-80-trio-hmo.yaml
 
 people:
   - profiles/middle-aged-adult.yaml
