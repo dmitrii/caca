@@ -8,7 +8,10 @@ from caca.loaders.run_config_loader import load_run_config
 
 
 class TestLoadRunConfig:
-    def test_loads_complete_config(self, tmp_path):
+    def test_loads_complete_config(self, tmp_path, monkeypatch):
+        # Change to tmp_path since paths are resolved relative to cwd
+        monkeypatch.chdir(tmp_path)
+
         # Create simulation params file
         params_file = tmp_path / "params.yaml"
         params_file.write_text("""
@@ -47,9 +50,9 @@ name: alice
 primary_care_visit: 3
 """)
 
-        # Create run config
+        # Create run config with cwd-relative paths
         run_config = tmp_path / "run.yaml"
-        run_config.write_text(f"""
+        run_config.write_text("""
 simulation: params.yaml
 costs: costs.yaml
 

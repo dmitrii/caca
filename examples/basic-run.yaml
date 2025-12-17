@@ -1,13 +1,14 @@
 # Example run configuration
 # Usage: caca generate examples/basic-run.yaml
+# Note: Run from project root directory
 
-simulation: ../parameters/simulation.yaml
-costs: ../costs/2026-california.yaml
+simulation: parameters/simulation.yaml
+costs: costs/2026-california.yaml
 
 plans:
-  - ../plans/2026/bs-bronze-60-hdhp-ppo.yaml
-  - ../plans/2026/bs-silver-70-trio-hmo.yaml
-  - ../plans/2026/bs-gold-80-trio-hmo.yaml
+  - plans/2026/bs-bronze-60-hdhp-ppo.yaml
+  - plans/2026/bs-silver-70-trio-hmo.yaml
+  - plans/2026/bs-gold-80-trio-hmo.yaml
 
 people:
-  - ../profiles/middle-aged-adult.yaml
+  - profiles/middle-aged-adult.yaml
