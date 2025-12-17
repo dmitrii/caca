@@ -13,6 +13,10 @@ help:
 	@echo "  test      Run test suite (includes validation)"
 	@echo "  validate  Validate plan/profile/cost files"
 	@echo "  clean     Remove cache and compiled files"
+	@echo ""
+	@echo "After 'make deps', run caca with:"
+	@echo "  source .venv/bin/activate && caca gen examples/basic-run.yaml"
+	@echo "  or: .venv/bin/caca gen examples/basic-run.yaml"
 
 deps:
 	python -m venv .venv
