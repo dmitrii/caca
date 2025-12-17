@@ -3,12 +3,12 @@
 import argparse
 import sys
 from pathlib import Path
-from caca.config_loader import load_config
-from caca.plan_loader import load_plans
+from caca.loaders.run_config_loader import load_run_config
 from caca.simulation_runner import SimulationRunner
 from caca.results import ResultsStore
 from caca.output.terminal import TerminalRenderer
 from caca.output.json_export import JsonExporter
+from caca.validation import validate_directory, ValidationError
 
 
 def parse_args(args: list[str] | None = None) -> argparse.Namespace:
@@ -18,92 +18,106 @@ def parse_args(args: list[str] | None = None) -> argparse.Namespace:
         description="Care Casino - Monte Carlo healthcare cost simulator",
     )
 
-    parser.add_argument(
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Generate subcommand
+    gen_parser = subparsers.add_parser(
+        "generate",
+        aliases=["gen"],
+        help="Run simulation and generate estimates",
+    )
+    gen_parser.add_argument(
         "config",
-        help="Path to YAML configuration file",
+        help="Path to run configuration file",
     )
-    parser.add_argument(
-        "--plans",
-        default="plans.csv",
-        help="Path to plans CSV file (default: plans.csv)",
-    )
-    parser.add_argument(
+    gen_parser.add_argument(
         "--json",
         help="Path to write JSON results",
     )
-    parser.add_argument(
+    gen_parser.add_argument(
         "--quiet",
         action="store_true",
-        help="Suppress terminal output (use with --json)",
+        help="Suppress terminal output",
     )
-    parser.add_argument(
+    gen_parser.add_argument(
         "--breakdown",
-        help="Show cost breakdown by service type for a specific plan",
+        help="Write detailed breakdown to file",
     )
-    parser.add_argument(
+    gen_parser.add_argument(
         "--histogram-width",
         type=int,
         default=79,
         help="Width of histogram in characters (default: 79)",
     )
+    gen_parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Skip cache lookup, force fresh simulation",
+    )
+    gen_parser.add_argument(
+        "--cache-dir",
+        default=".caca-cache",
+        help="Cache directory (default: .caca-cache)",
+    )
 
-    return parser.parse_args(args)
+    # Validate subcommand
+    val_parser = subparsers.add_parser(
+        "validate",
+        aliases=["val"],
+        help="Validate data files",
+    )
+    val_parser.add_argument(
+        "paths",
+        nargs="+",
+        help="Directories to validate",
+    )
+
+    parsed = parser.parse_args(args)
+
+    # Normalize aliases
+    if parsed.command == "gen":
+        parsed.command = "generate"
+    elif parsed.command == "val":
+        parsed.command = "validate"
+
+    return parsed
 
 
-def main() -> None:
-    """Main entry point."""
-    args = parse_args()
-
-    # Validate files exist
+def cmd_generate(args: argparse.Namespace) -> int:
+    """Run the generate command."""
     config_path = Path(args.config)
     if not config_path.exists():
         print(f"Error: Config file not found: {args.config}", file=sys.stderr)
-        sys.exit(1)
-
-    plans_path = Path(args.plans)
-    if not plans_path.exists():
-        print(f"Error: Plans file not found: {args.plans}", file=sys.stderr)
-        sys.exit(1)
+        return 1
 
     # Load configuration
-    with open(config_path) as f:
-        config = load_config(f)
-
-    # Load plans
-    with open(plans_path) as f:
-        plans = load_plans(f)
+    config = load_run_config(config_path)
 
     # Extract simulation parameters
-    sim_config = config["simulation"]
-    iterations = sim_config.get("iterations", 1000)
-    convergence_threshold = sim_config.get("convergence_threshold_dollars", 100)
-    min_iterations = sim_config.get("min_iterations", 1000)
-    max_iterations = sim_config.get("max_iterations", 100000)
+    sim_params = config["simulation"]
+
+    # Build profiles dict for simulation runner
+    profiles = {}
+    household = []
+    for person in config["people"]:
+        name = person["name"]
+        profiles[name] = person["usage"]
+        household.append({"name": name, "profile": name})
 
     # Run simulation
     runner = SimulationRunner(
-        plans=plans,
-        profiles=config["profiles"],
-        household=config["household"],
-        default_costs=config["defaults"]["costs"],
+        plans=config["plans"],
+        profiles=profiles,
+        household=household,
+        default_costs=config["costs"],
         year=2025,
     )
 
     results = runner.run(
-        iterations=iterations,
-        convergence_threshold_dollars=convergence_threshold,
-        min_iterations=min_iterations,
-        max_iterations=max_iterations,
-    )
-
-    # Build results store
-    store = ResultsStore(
-        iterations=results.iterations,
-        converged=results.converged,
-        convergence_threshold_dollars=convergence_threshold,
-        household=config["household"],
-        plan_names=[p.name for p in plans],
-        scenarios=results.scenarios,
+        iterations=sim_params["iterations"],
+        convergence_threshold_dollars=sim_params["convergence_threshold_dollars"],
+        min_iterations=sim_params["min_iterations"],
+        max_iterations=sim_params["max_iterations"],
     )
 
     # Collect plan costs for histograms
@@ -112,7 +126,7 @@ def main() -> None:
             s.plan_results[plan.name].total_cost
             for s in results.scenarios
         ]
-        for plan in plans
+        for plan in config["plans"]
     }
 
     # Terminal output
@@ -120,43 +134,84 @@ def main() -> None:
         renderer = TerminalRenderer(histogram_width=args.histogram_width)
         renderer.render_full_report(
             sys.stdout,
-            config["household"],
+            household,
             results.iterations,
             results.converged,
-            convergence_threshold,
+            sim_params["convergence_threshold_dollars"],
             results.summary,
             plan_costs,
         )
 
-        # Breakdown for specific plan
-        if args.breakdown:
-            # Find matching plan (case-insensitive partial match)
-            matching_plan = None
-            for plan in plans:
-                if args.breakdown.lower() in plan.name.lower():
-                    matching_plan = plan
-                    break
-
-            if matching_plan:
+    # Breakdown output
+    if args.breakdown:
+        with open(args.breakdown, "w") as f:
+            renderer = TerminalRenderer(histogram_width=args.histogram_width)
+            for plan in config["plans"]:
                 renderer.render_breakdown(
-                    sys.stdout,
-                    matching_plan.name,
+                    f,
+                    plan.name,
                     results.scenarios,
-                    matching_plan.premium,
-                    plan_rules=matching_plan,
-                    highlight_thresholds=config["defaults"]["highlight_thresholds"],
+                    plan.premium,
+                    plan_rules=plan,
                 )
-            else:
-                print(f"\nWarning: No plan found matching '{args.breakdown}'", file=sys.stderr)
-                print(f"Available plans: {', '.join(p.name for p in plans)}", file=sys.stderr)
+        if not args.quiet:
+            print(f"\nBreakdown written to {args.breakdown}")
 
     # JSON output
     if args.json:
+        store = ResultsStore(
+            iterations=results.iterations,
+            converged=results.converged,
+            convergence_threshold_dollars=sim_params["convergence_threshold_dollars"],
+            household=household,
+            plan_names=[p.name for p in config["plans"]],
+            scenarios=results.scenarios,
+        )
         exporter = JsonExporter()
         with open(args.json, "w") as f:
             exporter.export(f, store, results.summary)
         if not args.quiet:
             print(f"\nResults written to {args.json}")
+
+    return 0
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    """Run the validate command."""
+    all_errors: list[ValidationError] = []
+
+    for path_str in args.paths:
+        path = Path(path_str)
+        if not path.exists():
+            print(f"Error: Path not found: {path_str}", file=sys.stderr)
+            return 1
+        if path.is_dir():
+            all_errors.extend(validate_directory(path))
+        else:
+            print(f"Warning: Skipping non-directory: {path_str}", file=sys.stderr)
+
+    if all_errors:
+        print(f"Found {len(all_errors)} validation error(s):\n", file=sys.stderr)
+        for error in all_errors:
+            print(f"Error: {error.message}", file=sys.stderr)
+            print(f"  In: {error.file_path}", file=sys.stderr)
+            if error.line:
+                print(f"  Line: {error.line}", file=sys.stderr)
+            print(file=sys.stderr)
+        return 1
+
+    print(f"✓ All files valid")
+    return 0
+
+
+def main() -> None:
+    """Main entry point."""
+    args = parse_args()
+
+    if args.command == "generate":
+        sys.exit(cmd_generate(args))
+    elif args.command == "validate":
+        sys.exit(cmd_validate(args))
 
 
 if __name__ == "__main__":
