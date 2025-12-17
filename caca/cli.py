@@ -8,7 +8,7 @@ from caca.simulation_runner import SimulationRunner
 from caca.results import ResultsStore
 from caca.output.terminal import TerminalRenderer
 from caca.output.json_export import JsonExporter
-from caca.validation import validate_directory, ValidationError
+from caca.validation import validate_directory, validate_run_config_file, ValidationError
 
 
 def parse_args(args: list[str] | None = None) -> argparse.Namespace:
@@ -187,8 +187,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
             return 1
         if path.is_dir():
             all_errors.extend(validate_directory(path))
+        elif path.suffix in (".yaml", ".yml"):
+            all_errors.extend(validate_run_config_file(path))
         else:
-            print(f"Warning: Skipping non-directory: {path_str}", file=sys.stderr)
+            print(f"Warning: Skipping non-YAML file: {path_str}", file=sys.stderr)
 
     if all_errors:
         print(f"Found {len(all_errors)} validation error(s):\n", file=sys.stderr)

@@ -173,6 +173,121 @@ def validate_run_config(config: dict, config_path: Path) -> list[ValidationError
     return errors
 
 
+def validate_run_config_file(config_path: Path) -> list[ValidationError]:
+    """Validate a run config file and all referenced files.
+
+    Checks that:
+    1. The run config YAML is valid
+    2. All referenced files exist (simulation, costs, plans, people)
+    3. Referenced files are themselves valid
+    """
+    errors = []
+    config_path = Path(config_path)
+
+    # Load the run config
+    try:
+        with open(config_path) as f:
+            raw = yaml.safe_load(f)
+    except yaml.YAMLError as e:
+        errors.append(ValidationError(
+            message=f"Invalid YAML: {e}",
+            file_path=str(config_path),
+        ))
+        return errors
+
+    if raw is None:
+        errors.append(ValidationError(
+            message="Empty run config file",
+            file_path=str(config_path),
+        ))
+        return errors
+
+    # Check required fields exist
+    for field in ["simulation", "costs", "plans", "people"]:
+        if field not in raw:
+            errors.append(ValidationError(
+                message=f"Missing required field '{field}'",
+                file_path=str(config_path),
+            ))
+
+    # Check simulation file exists and is valid
+    if "simulation" in raw:
+        sim_path = Path(raw["simulation"])
+        if not sim_path.exists():
+            errors.append(ValidationError(
+                message=f"Simulation file not found: {raw['simulation']}",
+                file_path=str(config_path),
+            ))
+
+    # Check costs file exists and is valid
+    if "costs" in raw:
+        costs_path = Path(raw["costs"])
+        if not costs_path.exists():
+            errors.append(ValidationError(
+                message=f"Costs file not found: {raw['costs']}",
+                file_path=str(config_path),
+            ))
+        elif costs_path.exists():
+            with open(costs_path) as f:
+                try:
+                    costs_data = yaml.safe_load(f)
+                    if costs_data:
+                        errors.extend(validate_costs(costs_data, str(costs_path)))
+                except yaml.YAMLError as e:
+                    errors.append(ValidationError(
+                        message=f"Invalid YAML: {e}",
+                        file_path=str(costs_path),
+                    ))
+
+    # Check plan files exist and are valid
+    for plan_path_str in raw.get("plans", []):
+        plan_path = Path(plan_path_str)
+        if not plan_path.exists():
+            errors.append(ValidationError(
+                message=f"Plan file not found: {plan_path_str}",
+                file_path=str(config_path),
+            ))
+        else:
+            with open(plan_path) as f:
+                try:
+                    plan_data = yaml.safe_load(f)
+                    if plan_data:
+                        errors.extend(validate_plan(plan_data, str(plan_path)))
+                except yaml.YAMLError as e:
+                    errors.append(ValidationError(
+                        message=f"Invalid YAML: {e}",
+                        file_path=str(plan_path),
+                    ))
+
+    # Check profile files exist and are valid
+    for profile_path_str in raw.get("people", []):
+        profile_path = Path(profile_path_str)
+        if not profile_path.exists():
+            errors.append(ValidationError(
+                message=f"Profile file not found: {profile_path_str}",
+                file_path=str(config_path),
+            ))
+        else:
+            with open(profile_path) as f:
+                try:
+                    profile_data = yaml.safe_load(f)
+                    if profile_data:
+                        errors.extend(validate_profile(profile_data, str(profile_path)))
+                except yaml.YAMLError as e:
+                    errors.append(ValidationError(
+                        message=f"Invalid YAML: {e}",
+                        file_path=str(profile_path),
+                    ))
+
+    return errors
+
+
+def is_run_config(data: dict) -> bool:
+    """Check if data looks like a run config file."""
+    run_config_keys = {"simulation", "costs", "plans", "people"}
+    return bool(run_config_keys & set(data.keys()))
+
+
 def validate_directory(path: Path) -> list[ValidationError]:
     """Validate all files in a directory."""
     errors = []
@@ -195,7 +310,9 @@ def validate_directory(path: Path) -> list[ValidationError]:
             continue
 
         # Determine file type by content or path
-        if "plan_name" in data:
+        if is_run_config(data):
+            errors.extend(validate_run_config_file(yaml_file))
+        elif "plan_name" in data:
             errors.extend(validate_plan(data, str(yaml_file)))
         elif "name" in data and any(
             k in data for k in ["primary_care_visit", "specialist_visit", "labs"]
