@@ -10,6 +10,7 @@ help:
 	@echo "Targets:"
 	@echo "  help      Show this help message (default)"
 	@echo "  deps      Create venv and install dependencies"
+	@echo "  run       Generate an estimate"
 	@echo "  test      Run test suite (includes validation)"
 	@echo "  validate  Validate plan/profile/cost files"
 	@echo "  clean     Remove cache and compiled files"
@@ -21,6 +22,9 @@ help:
 deps:
 	python -m venv .venv
 	.venv/bin/pip install -e ".[dev]"
+
+run:
+	.venv/bin/caca generate examples/basic-run.yaml 
 
 test: validate
 	.venv/bin/pytest
