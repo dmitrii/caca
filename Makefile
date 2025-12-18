@@ -30,7 +30,7 @@ test: validate
 	.venv/bin/pytest
 
 validate:
-	.venv/bin/caca validate plans/ profiles/ costs/
+	.venv/bin/caca validate plans/ profiles/ costs/ examples/
 
 clean:
 	rm -rf .caca-cache/
