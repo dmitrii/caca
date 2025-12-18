@@ -71,3 +71,64 @@ people:
         assert config["plans"][0].name == "Test Plan"
         assert len(config["people"]) == 1
         assert config["people"][0]["name"] == "alice"
+
+    def test_duplicate_profile_gets_numbered_names(self, tmp_path, monkeypatch):
+        """When the same profile is listed multiple times, names are numbered."""
+        monkeypatch.chdir(tmp_path)
+
+        # Create simulation params file
+        params_file = tmp_path / "params.yaml"
+        params_file.write_text("""
+iterations: 1000
+convergence_threshold_dollars: 50
+max_iterations: 5000
+min_iterations: 100
+""")
+
+        # Create costs file
+        costs_file = tmp_path / "costs.yaml"
+        costs_file.write_text("""
+primary_care_visit: 150-300
+""")
+
+        # Create plan file
+        plans_dir = tmp_path / "plans"
+        plans_dir.mkdir()
+        plan_file = plans_dir / "test-plan.yaml"
+        plan_file.write_text("""
+plan_name: Test Plan
+premium: 500
+deductible_individual: 1000
+deductible_family: 2000
+oop_max_individual: 5000
+oop_max_family: 10000
+""")
+
+        # Create a single profile file
+        profiles_dir = tmp_path / "profiles"
+        profiles_dir.mkdir()
+        profile_file = profiles_dir / "adult.yaml"
+        profile_file.write_text("""
+name: adult
+primary_care_visit: 3
+""")
+
+        # Create run config that lists the same profile twice
+        run_config = tmp_path / "run.yaml"
+        run_config.write_text("""
+simulation: params.yaml
+costs: costs.yaml
+
+plans:
+  - plans/test-plan.yaml
+
+people:
+  - profiles/adult.yaml
+  - profiles/adult.yaml
+""")
+
+        config = load_run_config(run_config)
+
+        assert len(config["people"]) == 2
+        assert config["people"][0]["name"] == "adult 1"
+        assert config["people"][1]["name"] == "adult 2"

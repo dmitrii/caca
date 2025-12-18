@@ -281,8 +281,8 @@ people:
         assert len(errors) >= 1
         assert any("missing.yaml" in e.message for e in errors)
 
-    def test_duplicate_person_names(self, tmp_path, monkeypatch):
-        """Run config with duplicate person names reports error."""
+    def test_duplicate_person_names_allowed(self, tmp_path, monkeypatch):
+        """Run config with duplicate person names is allowed (loader auto-numbers)."""
         monkeypatch.chdir(tmp_path)
 
         params = tmp_path / "params.yaml"
@@ -294,11 +294,9 @@ people:
         profiles_dir = tmp_path / "profiles"
         profiles_dir.mkdir()
 
-        alice1 = profiles_dir / "alice1.yaml"
-        alice1.write_text("name: alice\nprimary_care_visit: 3\n")
-
-        alice2 = profiles_dir / "alice2.yaml"
-        alice2.write_text("name: alice\nprimary_care_visit: 5\n")
+        # Same file listed twice is allowed
+        alice = profiles_dir / "alice.yaml"
+        alice.write_text("name: alice\nprimary_care_visit: 3\n")
 
         run_config = tmp_path / "run.yaml"
         run_config.write_text("""
@@ -306,11 +304,10 @@ simulation: params.yaml
 costs: costs.yaml
 plans: []
 people:
-  - profiles/alice1.yaml
-  - profiles/alice2.yaml
+  - profiles/alice.yaml
+  - profiles/alice.yaml
 """)
 
         from caca.validation import validate_run_config_file
         errors = validate_run_config_file(run_config)
-        assert len(errors) >= 1
-        assert any("duplicate" in e.message.lower() for e in errors)
+        assert errors == []

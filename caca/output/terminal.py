@@ -29,7 +29,11 @@ class TerminalRenderer:
         output.write("=" * 40 + "\n\n")
 
         # Household
-        members = ", ".join(f"{m['name']} ({m['profile']})" for m in household)
+        def format_member(m):
+            if m['name'] == m['profile']:
+                return m['name']
+            return f"{m['name']} ({m['profile']})"
+        members = ", ".join(format_member(m) for m in household)
         output.write(f"Household: {members}\n")
 
         # Iterations
