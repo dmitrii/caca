@@ -106,3 +106,31 @@ emergency_room: { copay: 250, coinsurance: 10% }
         plan = load_plan_yaml(StringIO(yaml_content))
 
         assert plan.service_costs[ServiceType.EMERGENCY_ROOM] == CostShare(250.0, 0.10)
+
+
+class TestLoadSubsidy:
+    def test_subsidy_annualized(self):
+        yaml_content = """
+plan_name: Subsidized Plan
+premium: 2000
+subsidy: 1500
+deductible_individual: 0
+deductible_family: 0
+oop_max_individual: 5000
+oop_max_family: 10000
+"""
+        plan = load_plan_yaml(StringIO(yaml_content))
+        assert plan.premium == 24000
+        assert plan.subsidy == 18000
+
+    def test_subsidy_defaults_to_zero_when_absent(self):
+        yaml_content = """
+plan_name: No Subsidy
+premium: 2000
+deductible_individual: 0
+deductible_family: 0
+oop_max_individual: 5000
+oop_max_family: 10000
+"""
+        plan = load_plan_yaml(StringIO(yaml_content))
+        assert plan.subsidy == 0.0

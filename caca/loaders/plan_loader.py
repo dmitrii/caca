@@ -62,6 +62,7 @@ def load_plan_yaml(file: TextIO) -> PlanRules:
                 service_costs_after_deductible[service_type] = value
 
     monthly_premium = parse_cost_value(data.get("premium")) or 0.0
+    monthly_subsidy = parse_cost_value(data.get("subsidy")) or 0.0
 
     return PlanRules(
         name=data.get("plan_name", "Unknown Plan"),
@@ -79,4 +80,5 @@ def load_plan_yaml(file: TextIO) -> PlanRules:
         oop_max_rx_family=parse_cost_value(data.get("oop_max_rx_family")),
         oop_max_per_rx=parse_cost_value(data.get("oop_max_per_rx")),
         deductible_model=data.get("deductible_model", "individual_first"),
+        subsidy=monthly_subsidy * 12,
     )
