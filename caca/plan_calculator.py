@@ -7,9 +7,10 @@ from caca.models import Event, EventCost, ServiceType, PlanRules, PlanResult, Co
 class PlanCalculator:
     """Calculates healthcare costs for a set of events under a plan."""
 
-    def __init__(self, plan: PlanRules, household_members: list[str]):
+    def __init__(self, plan: PlanRules, household_members: list[str], gross: bool = False):
         self.plan = plan
         self.household_members = household_members
+        self.gross = gross
 
     def calculate(self, events: list[Event]) -> PlanResult:
         """Calculate total costs for a list of events."""
@@ -135,9 +136,10 @@ class PlanCalculator:
             if (new_ind_oop_met or new_fam_oop_met) and oop_max_hit_date is None:
                 oop_max_hit_date = event.date
 
+        effective_premium = self.plan.effective_premium(self.gross)
         return PlanResult(
-            total_cost=self.plan.premium + total_oop,
-            premium=self.plan.premium,
+            total_cost=effective_premium + total_oop,
+            premium=effective_premium,
             out_of_pocket=total_oop,
             deductible_hit_date=deductible_hit_date,
             oop_max_hit_date=oop_max_hit_date,

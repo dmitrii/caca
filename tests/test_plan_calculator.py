@@ -31,6 +31,7 @@ def make_plan(
         oop_max_rx_family=kwargs.get("oop_max_rx_family"),
         oop_max_per_rx=kwargs.get("oop_max_per_rx"),
         deductible_model=kwargs.get("deductible_model", "individual_first"),
+        subsidy=kwargs.get("subsidy", 0.0),
     )
 
 
@@ -263,3 +264,19 @@ class TestCopayPlusCoinsurance:
         result = calc.calculate(events)
 
         assert result.out_of_pocket == 100
+
+
+class TestSubsidyPricing:
+    def test_net_total_subtracts_subsidy(self):
+        plan = make_plan(premium=12000, subsidy=9000)
+        calc = PlanCalculator(plan, ["alice"])  # gross defaults to False
+        result = calc.calculate([])
+        assert result.premium == 3000
+        assert result.total_cost == 3000
+
+    def test_gross_total_uses_full_premium(self):
+        plan = make_plan(premium=12000, subsidy=9000)
+        calc = PlanCalculator(plan, ["alice"], gross=True)
+        result = calc.calculate([])
+        assert result.premium == 12000
+        assert result.total_cost == 12000
