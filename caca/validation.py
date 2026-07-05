@@ -111,6 +111,21 @@ def validate_plan(data: dict[str, Any], file_path: str) -> list[ValidationError]
                         file_path=file_path,
                     ))
 
+    # Subsidy cannot be negative or exceed the premium (net premium >= 0)
+    subsidy = data.get("subsidy")
+    premium = data.get("premium")
+    if isinstance(subsidy, (int, float)):
+        if subsidy < 0:
+            errors.append(ValidationError(
+                message=f"Invalid subsidy '{subsidy}': must not be negative",
+                file_path=file_path,
+            ))
+        elif isinstance(premium, (int, float)) and subsidy > premium:
+            errors.append(ValidationError(
+                message=f"Subsidy (${subsidy:,.2f}) exceeds premium (${premium:,.2f})",
+                file_path=file_path,
+            ))
+
     return errors
 
 

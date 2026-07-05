@@ -329,3 +329,19 @@ class TestValidateComboCostShare:
         errors = validate_plan(plan_data, "test.yaml")
         assert len(errors) == 1
         assert "coinsurance" in errors[0].message.lower()
+
+
+class TestValidateSubsidy:
+    def test_subsidy_within_premium_passes(self):
+        plan_data = complete_plan_data(premium=2000, subsidy=1500)
+        assert validate_plan(plan_data, "test.yaml") == []
+
+    def test_subsidy_equal_to_premium_passes(self):
+        plan_data = complete_plan_data(premium=2000, subsidy=2000)
+        assert validate_plan(plan_data, "test.yaml") == []
+
+    def test_subsidy_exceeding_premium_rejected(self):
+        plan_data = complete_plan_data(premium=2000, subsidy=2500)
+        errors = validate_plan(plan_data, "test.yaml")
+        assert len(errors) == 1
+        assert "subsidy" in errors[0].message.lower()
