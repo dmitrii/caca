@@ -1,0 +1,15 @@
+# chronic condition managed by a specialist
+# - 2x yearly specialist visits
+# - medication $375 x 4/year (assuming it is covered)
+# - no Urgent Care or ER visits
+
+name: calzone_dad
+
+preventative_visit: 1
+primary_care_visit: 1
+tier_1_generic_drugs: 4
+specialist_visit:
+  - { count: 2, cost: 350, description: "specialist visits" }
+tier_4_specialty_drugs:
+  - { count: 4, cost: 375, description: "specialist-prescribed medication" }
+

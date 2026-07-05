@@ -1,0 +1,7 @@
+# healthy child
+# - no Urgent Care or ER visits
+
+name: calzone_kid
+
+preventative_visit: 1  # well-child visits
+

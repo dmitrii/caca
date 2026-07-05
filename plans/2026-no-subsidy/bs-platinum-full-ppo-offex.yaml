@@ -1,0 +1,60 @@
+# Blue Shield Platinum Full PPO 0/0 OffEx
+# Source: Summary of Benefits (docs/ref/blue-shield-platinum-full-ppo-zerozero-offex-summary-of-benefits.pdf)
+#         Evidence of Coverage policy M0033933
+# Off-exchange plan: not eligible for ACA premium subsidies.
+# Values are participating-provider cost-shares. The plan has a $0 medical
+# deductible, so before- and after-deductible cost-shares are identical.
+#
+# Simplifications (single-value model cannot capture every SBC nuance):
+# - imaging: CT/PET/MRI at a freestanding radiology center is 10% coinsurance;
+#   the outpatient-hospital setting ($100/visit + 10%) and x-ray ($25) are not
+#   modeled separately.
+# - outpatient_services: ambulatory surgery center is 10% coinsurance; the
+#   outpatient-hospital setting ($100/surgery + 10%) is not modeled separately.
+# - emergency_room: $250/visit facility copay + 10% coinsurance, applied as
+#   copay + coinsurance on the amount beyond the copay.
+# - tier_4_specialty_drugs: 30% coinsurance up to $250/prescription (retail);
+#   the per-prescription cap is recorded in oop_max_per_rx.
+
+plan_name: BS Platinum Full PPO 0/0 OffEx
+
+# Full monthly premium $2,984 = an employee share plus a third-party contribution
+# an example amount. The employer contribution is modeled via the subsidy field below.
+premium: 2984
+
+deductible_individual: 0
+deductible_family: 0
+
+oop_max_individual: 5000
+oop_max_family: 10000
+oop_max_per_rx: 250
+
+preventative_visit: 0
+primary_care_visit: 0
+specialist_visit: 45
+labs: 15
+imaging: 0.1
+outpatient_services: 0.1
+outpatient_rehabilitation_services: 0.1
+inpatient_services: 0.1
+emergency_room: { copay: 250, coinsurance: 0.10 }
+urgent_care: 0
+tier_1_generic_drugs: 0
+tier_2_preferred_brand_drugs: 35
+tier_3_non_preferred_brand_drugs: 55
+tier_4_specialty_drugs: 0.3
+
+preventative_visit_after_deductible: 0
+primary_care_visit_after_deductible: 0
+specialist_visit_after_deductible: 45
+labs_after_deductible: 15
+imaging_after_deductible: 0.1
+outpatient_services_after_deductible: 0.1
+outpatient_rehabilitation_services_after_deductible: 0.1
+inpatient_services_after_deductible: 0.1
+emergency_room_after_deductible: { copay: 250, coinsurance: 0.10 }
+urgent_care_after_deductible: 0
+tier_1_generic_drugs_after_deductible: 0
+tier_2_preferred_brand_drugs_after_deductible: 35
+tier_3_non_preferred_brand_drugs_after_deductible: 55
+tier_4_specialty_drugs_after_deductible: 0.3

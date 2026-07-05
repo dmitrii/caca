@@ -1,0 +1,10 @@
+# healthy child
+#
+# small chance of Urgent Care or ER visits
+
+name: kid
+
+preventative_visit: 1  # well-child visits
+emergency_room: { probability: 0.02 }
+urgent_care: { probability: 0.05, count: 1-2 }
+

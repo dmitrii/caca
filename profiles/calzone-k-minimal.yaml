@@ -1,0 +1,12 @@
+# chronic condition requiring specialty medication
+# - quarterly specialty infusion (assuming it is covered at tier 3)
+# - no Urgent Care or ER visits
+
+name: calzone_mom
+
+preventative_visit: 1
+primary_care_visit: 1
+specialist_visit: 2  # specialist follow-ups
+labs: 2  # bloodwork for medication monitoring
+tier_3_non_preferred_brand_drugs:
+  - { count: 4, cost: 22565, description: "quarterly specialty infusion" }

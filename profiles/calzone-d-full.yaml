@@ -1,0 +1,19 @@
+# chronic condition managed by a specialist
+# - 2x yearly specialist visits
+# - medication $375 x 4/year (assuming NOT covered)
+# - scheduled $10k outpatient procedure
+# - low-probability Urgent Care and ER visits
+
+name: calzone_dad
+
+emergency_room: { probability: 0.05 }
+urgent_care: { probability: 0.1, count: 1-2 }
+preventative_visit: 1
+primary_care_visit: 2-3
+tier_1_generic_drugs: 4
+specialist_visit:
+  - { count: 2, cost: 350, description: "specialist visits" }
+uncovered:
+  - { count: 4, cost: 375, description: "specialist-prescribed medication (not covered)" }
+outpatient_services:
+  - { cost: 10000, date: "2025-04-15", description: "scheduled outpatient procedure" }

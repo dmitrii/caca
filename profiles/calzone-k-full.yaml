@@ -1,0 +1,18 @@
+# chronic condition requiring specialty medication
+# - quarterly specialty infusion (assuming it is covered at tier 3)
+# - low-probability Urgent Care and ER visits
+
+name: calzone_mom
+
+emergency_room: { probability: 0.05 }
+urgent_care: { probability: 0.1, count: 1-2 }
+preventative_visit: 1
+primary_care_visit: 2-4
+specialist_visit: 2-4  # specialist follow-ups
+labs: 4-6  # bloodwork for medication monitoring
+tier_3_non_preferred_brand_drugs:
+  - { count: 4, cost: 22565, description: "quarterly specialty infusion" }
+outpatient_rehabilitation_services:
+  - { count: 20, cost: 80, description: "physical therapy sessions" }
+outpatient_services:
+  - { cost: 10000, date: "2025-05-15", description: "scheduled outpatient procedure" }
