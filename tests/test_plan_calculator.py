@@ -3,7 +3,7 @@
 import pytest
 from datetime import date
 from caca.plan_calculator import PlanCalculator
-from caca.models import Event, ServiceType, PlanRules, PlanResult
+from caca.models import Event, ServiceType, PlanRules, PlanResult, CostShare
 
 
 def make_plan(
@@ -220,3 +220,46 @@ class TestRxDeductibles:
         # First 5 drugs: $500 (Rx deductible)
         # 6th drug: $20 copay
         assert result.out_of_pocket == 520
+
+
+class TestCopayPlusCoinsurance:
+    """A single service that charges a fixed copay AND coinsurance together."""
+
+    def test_copay_plus_coinsurance_on_event(self):
+        # $250 copay + 10% coinsurance on the amount beyond the copay
+        plan = make_plan(
+            deductible_individual=0,
+            deductible_family=0,
+            service_costs={
+                ServiceType.EMERGENCY_ROOM: CostShare(copay=250, coinsurance=0.10),
+            },
+            service_costs_after_deductible={
+                ServiceType.EMERGENCY_ROOM: CostShare(copay=250, coinsurance=0.10),
+            },
+        )
+        calc = PlanCalculator(plan, ["alice"])
+
+        events = [make_event(service_type=ServiceType.EMERGENCY_ROOM, cost=3000)]
+        result = calc.calculate(events)
+
+        # 250 + 0.10 * (3000 - 250) = 250 + 275 = 525
+        assert result.out_of_pocket == 525
+
+    def test_patient_never_pays_more_than_billed(self):
+        # If the billed cost is below the copay, patient pays only the billed amount
+        plan = make_plan(
+            deductible_individual=0,
+            deductible_family=0,
+            service_costs={
+                ServiceType.EMERGENCY_ROOM: CostShare(copay=250, coinsurance=0.10),
+            },
+            service_costs_after_deductible={
+                ServiceType.EMERGENCY_ROOM: CostShare(copay=250, coinsurance=0.10),
+            },
+        )
+        calc = PlanCalculator(plan, ["alice"])
+
+        events = [make_event(service_type=ServiceType.EMERGENCY_ROOM, cost=100)]
+        result = calc.calculate(events)
+
+        assert result.out_of_pocket == 100

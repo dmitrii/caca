@@ -1,7 +1,7 @@
 # PURPOSE: Terminal output rendering with ASCII tables and histograms
 
 from typing import TextIO
-from caca.models import ServiceType
+from caca.models import ServiceType, CostShare
 
 
 class TerminalRenderer:
@@ -345,7 +345,13 @@ class TerminalRenderer:
             if stype.value == "preventative_visit":
                 continue  # Skip preventative, always free
 
-            if cost > 0 and cost < 1:
+            if isinstance(cost, CostShare):
+                # Combined copay + coinsurance
+                negatives.append(
+                    f"{name}: {self.format_currency(cost.copay)} copay + "
+                    f"{cost.coinsurance:.0%} coinsurance after deductible"
+                )
+            elif cost > 0 and cost < 1:
                 # Coinsurance
                 negatives.append(f"{name}: {cost:.0%} coinsurance after deductible")
             elif cost >= high_copay:
@@ -357,7 +363,7 @@ class TerminalRenderer:
             name = stype.value.replace("_", " ").title()
             if stype.value == "preventative_visit":
                 continue
-            if cost == 0:
+            if not isinstance(cost, CostShare) and cost == 0:
                 # Also check before-deductible cost
                 before_cost = plan_rules.service_costs.get(stype, 0)
                 if before_cost == 0:

@@ -1,7 +1,7 @@
 # PURPOSE: Calculate costs for healthcare events under a plan's rules
 
 from datetime import date
-from caca.models import Event, EventCost, ServiceType, PlanRules, PlanResult
+from caca.models import Event, EventCost, ServiceType, PlanRules, PlanResult, CostShare
 
 
 class PlanCalculator:
@@ -164,6 +164,10 @@ class PlanCalculator:
         if cost_share is None:
             # No rule defined - assume full cost before deductible, 0 after
             return 0.0 if deductible_met else cost
+
+        # Combined copay + coinsurance
+        if isinstance(cost_share, CostShare):
+            return cost_share.patient_cost(cost)
 
         # Interpret cost share value
         if cost_share <= 1.0:

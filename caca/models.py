@@ -79,6 +79,22 @@ class CostRange:
     max_cost: float
 
 
+@dataclass(frozen=True)
+class CostShare:
+    """A service cost-share that charges a fixed copay and coinsurance together.
+
+    The patient pays the copay plus coinsurance on the amount beyond the copay,
+    never exceeding the billed cost.
+    """
+
+    copay: float
+    coinsurance: float
+
+    def patient_cost(self, cost: float) -> float:
+        """Return what the patient pays on a bill of the given cost."""
+        return min(cost, self.copay + self.coinsurance * max(0.0, cost - self.copay))
+
+
 @dataclass
 class PlanRules:
     """Rules for a healthcare plan."""

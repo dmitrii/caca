@@ -2,7 +2,7 @@
 
 import yaml
 from typing import TextIO
-from caca.models import PlanRules, ServiceType
+from caca.models import PlanRules, ServiceType, CostShare
 
 
 SERVICE_TYPE_MAP = {
@@ -23,10 +23,15 @@ SERVICE_TYPE_MAP = {
 }
 
 
-def parse_cost_value(value) -> float | None:
-    """Parse a cost value, handling percentages."""
+def parse_cost_value(value) -> float | CostShare | None:
+    """Parse a cost value, handling percentages and combined copay + coinsurance."""
     if value is None:
         return None
+    if isinstance(value, dict):
+        return CostShare(
+            copay=parse_cost_value(value.get("copay")) or 0.0,
+            coinsurance=parse_cost_value(value.get("coinsurance")) or 0.0,
+        )
     if isinstance(value, (int, float)):
         return float(value)
     value = str(value).strip()

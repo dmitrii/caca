@@ -311,3 +311,21 @@ people:
         from caca.validation import validate_run_config_file
         errors = validate_run_config_file(run_config)
         assert errors == []
+
+
+class TestValidateComboCostShare:
+    def test_valid_combo_passes(self):
+        plan_data = complete_plan_data(
+            emergency_room={"copay": 250, "coinsurance": 0.10},
+            emergency_room_after_deductible={"copay": 250, "coinsurance": 0.10},
+        )
+        errors = validate_plan(plan_data, "test.yaml")
+        assert errors == []
+
+    def test_combo_coinsurance_above_one_rejected(self):
+        plan_data = complete_plan_data(
+            emergency_room={"copay": 250, "coinsurance": 10},  # should be 0.10
+        )
+        errors = validate_plan(plan_data, "test.yaml")
+        assert len(errors) == 1
+        assert "coinsurance" in errors[0].message.lower()

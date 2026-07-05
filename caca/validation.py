@@ -84,6 +84,18 @@ def validate_plan(data: dict[str, Any], file_path: str) -> list[ValidationError]
             file_path=file_path,
         ))
 
+    # Check combined copay + coinsurance values
+    for field in REQUIRED_SERVICE_FIELDS:
+        for key in (field, f"{field}_after_deductible"):
+            value = data.get(key)
+            if isinstance(value, dict):
+                coinsurance = value.get("coinsurance", 0)
+                if isinstance(coinsurance, (int, float)) and coinsurance > 1:
+                    errors.append(ValidationError(
+                        message=f"Invalid coinsurance value '{coinsurance}' for {key}. Use 0-1 for percentage.",
+                        file_path=file_path,
+                    ))
+
     # Check coinsurance values are 0-1
     for field in COINSURANCE_FIELDS:
         if field in data:

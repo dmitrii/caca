@@ -74,3 +74,30 @@ class TestTerminalRenderer:
         renderer = TerminalRenderer()
         assert renderer.format_currency(1234.56) == "$1,235"
         assert renderer.format_currency(1000000) == "$1,000,000"
+
+
+class TestPlanHighlightsCombo:
+    def test_copay_plus_coinsurance_renders_without_crashing(self):
+        from caca.models import PlanRules, ServiceType, CostShare
+
+        plan = PlanRules(
+            name="Combo Plan",
+            premium=4000,
+            deductible_individual=0,
+            deductible_family=0,
+            oop_max_individual=5000,
+            oop_max_family=10000,
+            service_costs={ServiceType.EMERGENCY_ROOM: CostShare(250, 0.10)},
+            service_costs_after_deductible={
+                ServiceType.EMERGENCY_ROOM: CostShare(250, 0.10)
+            },
+        )
+        renderer = TerminalRenderer()
+        output = StringIO()
+
+        renderer._render_plan_highlights(output, plan, {})
+
+        text = output.getvalue()
+        assert "Emergency Room" in text
+        assert "$250" in text
+        assert "10% coinsurance" in text

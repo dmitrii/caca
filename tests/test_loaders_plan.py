@@ -3,7 +3,7 @@
 import pytest
 from io import StringIO
 from caca.loaders.plan_loader import load_plan_yaml
-from caca.models import ServiceType
+from caca.models import ServiceType, CostShare
 
 
 class TestLoadPlanYaml:
@@ -72,3 +72,37 @@ oop_max_family: 16000
         plan = load_plan_yaml(StringIO(yaml_content))
 
         assert plan.name == "Commented Plan"
+
+
+class TestLoadCopayPlusCoinsurance:
+    def test_loads_combined_copay_and_coinsurance(self):
+        yaml_content = """
+plan_name: Combo Plan
+premium: 400
+deductible_individual: 0
+deductible_family: 0
+oop_max_individual: 5000
+oop_max_family: 10000
+emergency_room: { copay: 250, coinsurance: 0.10 }
+emergency_room_after_deductible: { copay: 250, coinsurance: 0.10 }
+"""
+        plan = load_plan_yaml(StringIO(yaml_content))
+
+        share = plan.service_costs[ServiceType.EMERGENCY_ROOM]
+        assert share == CostShare(copay=250.0, coinsurance=0.10)
+        after = plan.service_costs_after_deductible[ServiceType.EMERGENCY_ROOM]
+        assert after == CostShare(copay=250.0, coinsurance=0.10)
+
+    def test_parses_percentage_string_in_combined_form(self):
+        yaml_content = """
+plan_name: Combo Percent Plan
+premium: 400
+deductible_individual: 0
+deductible_family: 0
+oop_max_individual: 5000
+oop_max_family: 10000
+emergency_room: { copay: 250, coinsurance: 10% }
+"""
+        plan = load_plan_yaml(StringIO(yaml_content))
+
+        assert plan.service_costs[ServiceType.EMERGENCY_ROOM] == CostShare(250.0, 0.10)
