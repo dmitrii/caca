@@ -138,3 +138,29 @@ class TestSimulationRunner:
         # For light users, cheap plan should win
         ranked = results.get_ranked_plans()
         assert ranked[0][0] == "cheap"
+
+
+def test_runner_gross_flag_controls_premium():
+    from caca.models import PlanRules
+    from caca.simulation_runner import SimulationRunner
+
+    plan = PlanRules(
+        name="Subsidized", premium=12000, deductible_individual=0, deductible_family=0,
+        oop_max_individual=5000, oop_max_family=10000,
+        service_costs={}, service_costs_after_deductible={}, subsidy=9000,
+    )
+    household = [{"name": "alice", "profile": "empty"}]
+
+    net_runner = SimulationRunner(
+        plans=[plan], profiles={"empty": {}}, household=household,
+        default_costs={}, year=2025, seed=1,
+    )
+    net = net_runner.run(iterations=10, min_iterations=10)
+    assert net.summary["Subsidized"]["expected_cost"] == 3000
+
+    gross_runner = SimulationRunner(
+        plans=[plan], profiles={"empty": {}}, household=household,
+        default_costs={}, year=2025, seed=1, gross=True,
+    )
+    gross = gross_runner.run(iterations=10, min_iterations=10)
+    assert gross.summary["Subsidized"]["expected_cost"] == 12000

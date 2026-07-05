@@ -38,6 +38,7 @@ class SimulationRunner:
         default_costs: dict[str, CostRange],
         year: int,
         seed: int | None = None,
+        gross: bool = False,
     ):
         self.plans = plans
         self.profiles = profiles
@@ -45,6 +46,7 @@ class SimulationRunner:
         self.default_costs = default_costs
         self.year = year
         self.seed = seed
+        self.gross = gross
         self.rng = np.random.default_rng(seed)
 
     def run(
@@ -78,7 +80,7 @@ class SimulationRunner:
                 # Calculate costs for each plan
                 plan_results: dict[str, PlanResult] = {}
                 for plan in self.plans:
-                    calc = PlanCalculator(plan, household_members)
+                    calc = PlanCalculator(plan, household_members, gross=self.gross)
                     result = calc.calculate(events)
                     plan_results[plan.name] = result
                     plan_costs[plan.name].append(result.total_cost)
