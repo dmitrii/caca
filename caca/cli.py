@@ -40,6 +40,11 @@ def parse_args(args: list[str] | None = None) -> argparse.Namespace:
         help="Suppress terminal output",
     )
     gen_parser.add_argument(
+        "--gross",
+        action="store_true",
+        help="Price plans at full premium, ignoring subsidies",
+    )
+    gen_parser.add_argument(
         "--breakdown",
         help="Write detailed breakdown to file",
     )
@@ -111,6 +116,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
         household=household,
         default_costs=config["costs"],
         year=2025,
+        gross=args.gross,
     )
 
     results = runner.run(
@@ -140,6 +146,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
             sim_params["convergence_threshold_dollars"],
             results.summary,
             plan_costs,
+            gross=args.gross,
         )
 
     # Breakdown output
@@ -151,8 +158,9 @@ def cmd_generate(args: argparse.Namespace) -> int:
                     f,
                     plan.name,
                     results.scenarios,
-                    plan.premium,
+                    plan.effective_premium(args.gross),
                     plan_rules=plan,
+                    gross=args.gross,
                 )
         if not args.quiet:
             print(f"\nBreakdown written to {args.breakdown}")

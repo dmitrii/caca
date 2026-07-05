@@ -101,3 +101,17 @@ class TestPlanHighlightsCombo:
         assert "Emergency Room" in text
         assert "$250" in text
         assert "10% coinsurance" in text
+
+
+class TestLensHeader:
+    def test_net_lens_header(self):
+        renderer = TerminalRenderer()
+        output = StringIO()
+        renderer.render_header(output, [{"name": "a", "profile": "a"}], 100, True, 100, gross=False)
+        assert "what you pay (net of subsidy)" in output.getvalue()
+
+    def test_gross_lens_header(self):
+        renderer = TerminalRenderer()
+        output = StringIO()
+        renderer.render_header(output, [{"name": "a", "profile": "a"}], 100, True, 100, gross=True)
+        assert "full price (gross)" in output.getvalue()

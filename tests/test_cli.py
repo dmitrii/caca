@@ -33,3 +33,14 @@ class TestParseArgs:
         args = parse_args(["gen", "config.yaml", "--no-cache", "--cache-dir", "/tmp/cache"])
         assert args.no_cache is True
         assert args.cache_dir == "/tmp/cache"
+
+
+def test_gross_flag_parses():
+    from caca.cli import parse_args
+    args = parse_args(["generate", "run.yaml", "--gross"])
+    assert args.gross is True
+
+def test_gross_defaults_false():
+    from caca.cli import parse_args
+    args = parse_args(["generate", "run.yaml"])
+    assert args.gross is False

@@ -22,6 +22,7 @@ class TerminalRenderer:
         iterations: int,
         converged: bool,
         convergence_threshold: float,
+        gross: bool = False,
     ) -> None:
         """Render the report header."""
         output.write("\n")
@@ -42,6 +43,8 @@ class TerminalRenderer:
         else:
             output.write(f"Scenarios simulated: {iterations:,}\n")
 
+        lens = "full price (gross)" if gross else "what you pay (net of subsidy)"
+        output.write(f"Premiums: {lens}\n")
         output.write("\n")
 
     def render_rankings(self, output: TextIO, summary: dict[str, dict]) -> None:
@@ -136,9 +139,10 @@ class TerminalRenderer:
         convergence_threshold: float,
         summary: dict[str, dict],
         plan_costs: dict[str, list[float]],
+        gross: bool = False,
     ) -> None:
         """Render the complete report."""
-        self.render_header(output, household, iterations, converged, convergence_threshold)
+        self.render_header(output, household, iterations, converged, convergence_threshold, gross=gross)
         self.render_rankings(output, summary)
 
         output.write("Cost Distribution\n")
@@ -163,6 +167,7 @@ class TerminalRenderer:
         plan_premium: float,
         plan_rules: "PlanRules | None" = None,
         highlight_thresholds: dict | None = None,
+        gross: bool = False,
     ) -> None:
         """Render cost breakdown by service type for a specific plan."""
         from caca.models import PlanRules
@@ -193,12 +198,19 @@ class TerminalRenderer:
 
         # Render both scenarios side by side
         self._render_scenario_comparison(
-            output, plan_name, min_oop_scenario, max_oop_scenario, plan_premium
+            output, plan_name, min_oop_scenario, max_oop_scenario, plan_premium,
+            plan_rules, gross,
         )
 
         # Render plan highlights if plan_rules provided
         if plan_rules:
             self._render_plan_highlights(output, plan_rules, highlight_thresholds or {})
+
+    def _premium_label(self, plan_rules, gross: bool) -> str:
+        subsidy = getattr(plan_rules, "subsidy", 0) or 0
+        if gross or subsidy <= 0:
+            return "Annual Premium"
+        return f"Annual Premium (net of {self.format_currency(subsidy)} subsidy)"
 
     def _render_scenario_comparison(
         self,
@@ -207,6 +219,8 @@ class TerminalRenderer:
         min_scenario,
         max_scenario,
         plan_premium: float,
+        plan_rules=None,
+        gross: bool = False,
     ) -> None:
         """Render side-by-side comparison of min and max OOP scenarios."""
         min_result = min_scenario.plan_results[plan_name]
@@ -265,7 +279,7 @@ class TerminalRenderer:
                 f"{self.format_currency(total_plan):>12}\n"
             )
             output.write(
-                f"{'Annual Premium':<35} {'':>12} "
+                f"{self._premium_label(plan_rules, gross):<35} {'':>12} "
                 f"{self.format_currency(plan_premium):>12}\n"
             )
             output.write(
@@ -308,7 +322,7 @@ class TerminalRenderer:
                 f"{self.format_currency(max_total_patient):>12}\n"
             )
             output.write(
-                f"{'Annual Premium':<35} {'':>12} "
+                f"{self._premium_label(plan_rules, gross):<35} {'':>12} "
                 f"{self.format_currency(plan_premium):>12} "
                 f"{'':>12} "
                 f"{self.format_currency(plan_premium):>12}\n"
