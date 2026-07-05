@@ -98,6 +98,29 @@ class TestPlanRules:
         assert rules.deductible_individual == 1500.0
 
 
+def test_plan_rules_subsidy_defaults_to_zero():
+    from caca.models import PlanRules
+    plan = PlanRules(
+        name="P", premium=12000, deductible_individual=0, deductible_family=0,
+        oop_max_individual=5000, oop_max_family=10000,
+        service_costs={}, service_costs_after_deductible={},
+    )
+    assert plan.subsidy == 0.0
+    assert plan.effective_premium(gross=False) == 12000
+    assert plan.effective_premium(gross=True) == 12000
+
+
+def test_effective_premium_subtracts_subsidy_when_net():
+    from caca.models import PlanRules
+    plan = PlanRules(
+        name="P", premium=12000, deductible_individual=0, deductible_family=0,
+        oop_max_individual=5000, oop_max_family=10000,
+        service_costs={}, service_costs_after_deductible={}, subsidy=9000,
+    )
+    assert plan.effective_premium(gross=False) == 3000
+    assert plan.effective_premium(gross=True) == 12000
+
+
 class TestScenarioResult:
     def test_create_scenario_result(self):
         result = ScenarioResult(

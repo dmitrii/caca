@@ -114,6 +114,12 @@ class PlanRules:
     oop_max_rx_family: Optional[float] = None
     oop_max_per_rx: Optional[float] = None
     deductible_model: str = "individual_first"
+    subsidy: float = 0.0
+
+    def effective_premium(self, gross: bool = False) -> float:
+        """Return the premium the household pays: full price under gross,
+        otherwise net of the third-party subsidy."""
+        return self.premium if gross else self.premium - self.subsidy
 
 
 @dataclass
