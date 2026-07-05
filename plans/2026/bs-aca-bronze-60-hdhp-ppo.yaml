@@ -6,6 +6,10 @@ plan_url: https://apply.coveredca.com/static/lw-enrollment/anon/plan-details/hea
 
 # Monthly premium (annual = $27,675.48)
 premium: 2306.29
+# subsidy: estimated enhanced-APTC for a example household at ~an example income (~450% FPL,
+# 8.5%-of-income cap on a ~$2,462 benchmark Silver). Shared household credit;
+# applies only if enhanced ACA subsidies are extended. Use --gross for the no-subsidy world.
+subsidy: 1612
 
 # Deductibles
 deductible_individual: 7200

@@ -5,6 +5,10 @@ plan_name: BS Gold 80 Trio HMO
 plan_url: https://apply.coveredca.com/static/lw-enrollment/anon/plan-details/health/jsAXtf4on1_vOitQNqpILHGR0oUlQWN3x8HlzJiFTiM/70285CA804000601
 
 premium: 2740.21
+# subsidy: estimated enhanced-APTC for a example household at ~an example income (~450% FPL,
+# 8.5%-of-income cap on a ~$2,462 benchmark Silver). Shared household credit;
+# applies only if enhanced ACA subsidies are extended. Use --gross for the no-subsidy world.
+subsidy: 1612
 
 deductible_individual: 0
 deductible_family: 0

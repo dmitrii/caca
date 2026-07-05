@@ -2,6 +2,10 @@
 
 plan_name: BS Bronze 60 PPO
 premium: 2317.96
+# subsidy: estimated enhanced-APTC for a example household at ~an example income (~450% FPL,
+# 8.5%-of-income cap on a ~$2,462 benchmark Silver). Shared household credit;
+# applies only if enhanced ACA subsidies are extended. Use --gross for the no-subsidy world.
+subsidy: 1612
 deductible_individual: 5800
 deductible_family: 11600
 deductible_rx_individual: 450

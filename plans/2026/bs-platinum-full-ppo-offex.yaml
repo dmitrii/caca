@@ -21,6 +21,9 @@ plan_name: BS Platinum Full PPO 0/0 OffEx
 # Full monthly premium $2,984 = an employee share plus a third-party contribution
 # an example amount. The employer contribution is modeled via the subsidy field below.
 premium: 2984
+# subsidy: employer contribution (total premium $2,984/mo, a third party pays part of it,
+# leaving the a small share/mo employee share as the net premium).
+subsidy: 2640
 
 deductible_individual: 0
 deductible_family: 0
