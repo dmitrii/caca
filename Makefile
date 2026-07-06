@@ -34,6 +34,6 @@ validate:
 
 clean:
 	rm -rf .caca-cache/
-	rm -rf __pycache__/
 	rm -rf .pytest_cache/
-	find . -name "*.pyc" -delete
+	rm -rf *.egg-info/
+	find . -name __pycache__ -type d -prune -exec rm -rf {} +
