@@ -1,0 +1,14 @@
+venv
+.venv
+__pycache__/
+.vscode/
+.idea/
+.eggs/
+*.egg-info/
+.cache/
+.claude/
+CLAUDE.md
+.pytest_cache/
+.coverage
+htmlcov/
+personal/
