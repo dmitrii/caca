@@ -1,0 +1,12 @@
+# Covered California subscriber usage.
+# Matches CoveredCA's published total counts for the household exactly:
+# 3 primary care, 2 specialist, 5 labs, 1 outpatient, 36 generic Rx, 17 brand Rx.
+
+name: coveredca_subscriber
+
+primary_care_visit: 3
+specialist_visit: 2
+labs: 5
+outpatient_services: 1
+tier_1_generic_drugs: 36
+tier_2_preferred_brand_drugs: 17

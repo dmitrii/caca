@@ -1,0 +1,25 @@
+# Covered California calibration scenario.
+#
+# Reproduces CoveredCA's own published cost estimates
+# (docs/ref/coveredca-estimates.txt) for a household of 3 — a subscriber plus
+# two dependents — across the five ACA marketplace plans. It's a sanity check
+# that the simulator agrees with a real-world authority.
+#
+# CoveredCA's estimates are full-premium, so compare with --gross:
+#   caca generate examples/coveredca.yaml --gross
+# (the ACA plans carry an estimated subsidy; the default net view is lower.)
+
+simulation: parameters/simulation.yaml
+costs: costs/2026-california.yaml
+
+plans:
+  - plans/2026/bs-aca-bronze-60-hdhp-ppo.yaml
+  - plans/2026/bs-aca-bronze-60-ppo.yaml
+  - plans/2026/bs-aca-silver-70-trio-hmo.yaml
+  - plans/2026/bs-aca-silver-70-ppo.yaml
+  - plans/2026/bs-aca-gold-80-trio-hmo.yaml
+
+people:
+  - profiles/coveredca-subscriber.yaml
+  - profiles/coveredca-dependent.yaml
+  - profiles/coveredca-dependent.yaml

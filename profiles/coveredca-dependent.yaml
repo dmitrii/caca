@@ -1,0 +1,10 @@
+# Covered California dependent usage (list this profile once per dependent).
+# A small add-on beyond the subscriber. It calibrates caca's Bronze HDHP
+# estimate to CoveredCA's published $36,015: their estimate implies ~$1,140
+# in dependent costs beyond the subscriber hitting the $7,200 individual OOP
+# max. Without these dependents, the HDHP estimate lands ~$1,100 low.
+
+name: coveredca_dependent
+
+primary_care_visit: 1
+labs: 1
