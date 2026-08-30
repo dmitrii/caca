@@ -52,14 +52,43 @@ make deps        # creates a .venv and installs caca in it
 .venv/bin/caca generate examples/basic-run.yaml
 ```
 
+You'll get a ranked table of plans by expected annual cost, 95% confidence
+intervals, best/worst-case years, and an ASCII cost distribution per plan.
+
+```
+Household: middle_aged_adult
+Scenarios simulated: 2,000 (converged at +/-$100)
+Premiums: what you pay (net of subsidy)
+
+Plan Rankings (by expected annual cost)
+========================================
+Rank  Plan                           Expected     95% CI               Best       Worst
+-------------------------------------------------------------------------------------------------
+1     BS Silver 70 Trio HMO          $11,079      $11,070-$11,088      $10,655    $11,823
+2     BS Bronze 60 HDHP PPO          $11,710      $11,661-$11,759      $9,876     $15,531
+3     BS Gold 80 Trio HMO            $14,222      $14,216-$14,228      $13,915    $14,765
+
+Cost Distribution
+========================================
+BS Silver 70 Trio HMO
+$9,876 |===============================================================================| $15,531
+                  ..+*###**+++......
+
+BS Bronze 60 HDHP PPO
+$9,876 |===============================================================================| $15,531
+        ......++++**#######*##*#***+++++++........+.+.+...............................+
+
+BS Gold 80 Trio HMO
+$9,876 |===============================================================================| $15,531
+                                                                ..*###*......
+```
+
+
 **Run for a family:**
 
 ```bash
 .venv/bin/caca generate examples/calzones-full.yaml
 ```
-
-You'll get a ranked table of plans by expected annual cost, 95% confidence
-intervals, best/worst-case years, and an ASCII cost distribution per plan.
 
 Useful flags:
 
