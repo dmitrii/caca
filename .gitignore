@@ -12,3 +12,4 @@ CLAUDE.md
 .coverage
 htmlcov/
 personal/
+docs/ref/

@@ -222,7 +222,7 @@ profiles/     usage profiles (one YAML per person-scenario)
 costs/        billed-cost tables
 parameters/   simulation settings
 examples/     runnable run-configurations
-docs/         design notes and reference plan documents
+docs/         design notes
 tests/        test suite
 ```
 

@@ -1,7 +1,7 @@
 # Covered California calibration scenario.
 #
 # Reproduces CoveredCA's own published cost estimates
-# (docs/ref/coveredca-estimates.txt) for a household of 3 — a subscriber plus
+# (from CoveredCA's estimator) for a household of 3 — a subscriber plus
 # two dependents — across the five ACA marketplace plans. It's a sanity check
 # that the simulator agrees with a real-world authority.
 #
