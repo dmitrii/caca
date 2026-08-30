@@ -1,6 +1,7 @@
-# Example run configuration
-# Usage: caca generate examples/basic-run.yaml
-# Note: Run from project root directory
+# Example run configuration — the Calzone family (dad, mom, kid), minimal usage.
+# Usage: caca generate examples/calzones-minimal.yaml
+# Run from the project root. The five bs-aca-* plans carry an example subsidy;
+# add --gross to price every plan at full premium.
 
 simulation: parameters/simulation.yaml
 costs: costs/2026-california.yaml

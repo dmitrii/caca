@@ -1,4 +1,4 @@
-# healthy child
+# child with a scheduled surgery
 # - low-probability Urgent Care and ER visits
 
 name: calzone_kid
@@ -9,5 +9,6 @@ preventative_visit: 1  # well-child visits
 primary_care_visit: 2-3
 specialist_visit: 4-6  # specialist pre/post surgery
 outpatient_services:
+  - { cost: 25000, date: "2025-04-01", description: "outpatient surgery" }
+outpatient_rehabilitation_services:
   - { count: 12, cost: 150, description: "physical therapy sessions" }
-

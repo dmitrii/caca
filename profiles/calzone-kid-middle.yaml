@@ -1,4 +1,4 @@
-# healthy child
+# child with follow-up therapy
 # - low-probability Urgent Care and ER visits
 
 name: calzone_kid
@@ -7,9 +7,6 @@ emergency_room: { probability: 0.05 }
 urgent_care: { probability: 0.1, count: 1-2 }
 preventative_visit: 1  # well-child visits
 primary_care_visit: 2-3
-specialist_visit: 4-6  # specialist pre/post surgery
-outpatient_services:
-  - { cost: 25000, date: "2025-04-01", description: "outpatient surgery" }
+specialist_visit: 4-6  # specialist visits
 outpatient_rehabilitation_services:
   - { count: 12, cost: 150, description: "physical therapy sessions" }
-

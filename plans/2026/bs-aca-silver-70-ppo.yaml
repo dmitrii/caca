@@ -2,9 +2,9 @@
 
 plan_name: BS Silver 70 PPO
 premium: 2861.94
-# subsidy: estimated enhanced-APTC for a example household at ~an example income (~450% FPL,
-# 8.5%-of-income cap on a ~$2,462 benchmark Silver). Shared household credit;
-# applies only if enhanced ACA subsidies are extended. Use --gross for the no-subsidy world.
+# subsidy: example premium subsidy (e.g. an ACA advance premium tax credit).
+# Net premium you pay = premium - subsidy; run with --gross to ignore it.
+# See the "Subsidies" section of the README.
 subsidy: 1612
 deductible_individual: 5200
 deductible_family: 10400

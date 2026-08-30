@@ -12,4 +12,3 @@ specialist_visit:
   - { count: 2, cost: 350, description: "specialist visits" }
 tier_4_specialty_drugs:
   - { count: 4, cost: 375, description: "specialist-prescribed medication" }
-
