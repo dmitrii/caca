@@ -1,28 +1,8 @@
 # Blue Shield Platinum Full PPO 0/0 OffEx
-# Source: Summary of Benefits (docs/ref/blue-shield-platinum-full-ppo-zerozero-offex-summary-of-benefits.pdf)
-#         Evidence of Coverage policy M0033933
-# Off-exchange plan: not eligible for ACA premium subsidies.
-# Values are participating-provider cost-shares. The plan has a $0 medical
-# deductible, so before- and after-deductible cost-shares are identical.
-#
-# Simplifications (single-value model cannot capture every SBC nuance):
-# - imaging: CT/PET/MRI at a freestanding radiology center is 10% coinsurance;
-#   the outpatient-hospital setting ($100/visit + 10%) and x-ray ($25) are not
-#   modeled separately.
-# - outpatient_services: ambulatory surgery center is 10% coinsurance; the
-#   outpatient-hospital setting ($100/surgery + 10%) is not modeled separately.
-# - emergency_room: $250/visit facility copay + 10% coinsurance, applied as
-#   copay + coinsurance on the amount beyond the copay.
-# - tier_4_specialty_drugs: 30% coinsurance up to $250/prescription (retail);
-#   the per-prescription cap is recorded in oop_max_per_rx.
+# Source: Blue Shield Summary of Benefits (see docs/ref/)
 
 plan_name: BS Platinum Full PPO 0/0 OffEx
-
-# Full monthly premium. The subsidy field below models a third-party
-# contribution (e.g. an employer's share); net premium = premium - subsidy.
 premium: 2984
-# subsidy: example third-party (e.g. employer) contribution toward the premium.
-# See the "Subsidies" section of the README.
 subsidy: 2640
 
 deductible_individual: 0

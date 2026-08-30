@@ -1,10 +1,8 @@
-# PURPOSE: BS Bronze 60 PPO plan parameters
+# Blue Shield Bronze 60 PPO
+# Source: CoveredCA 2025 plan year
 
 plan_name: BS Bronze 60 PPO
 premium: 2317.96
-# subsidy: example premium subsidy (e.g. an ACA advance premium tax credit).
-# Net premium you pay = premium - subsidy; run with --gross to ignore it.
-# See the "Subsidies" section of the README.
 subsidy: 1612
 deductible_individual: 5800
 deductible_family: 11600

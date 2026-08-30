@@ -10,8 +10,8 @@ labs: 2-4
 imaging:
   probability: 0.3
   count: 1
-tier_1_generic_drugs: 12-24
-tier_2_preferred_brand_drugs: 6-12
+tier_1_generic_drugs: 6-12
+tier_2_preferred_brand_drugs: 0-4
 urgent_care:
   probability: 0.15
   count: 1

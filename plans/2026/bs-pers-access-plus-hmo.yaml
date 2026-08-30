@@ -1,4 +1,5 @@
-# PURPOSE: BS PERS Access+ HMO plan parameters
+# Blue Shield PERS Access+ HMO
+# Source: CalPERS
 
 plan_name: BS PERS Access+ HMO
 premium: 3110.19

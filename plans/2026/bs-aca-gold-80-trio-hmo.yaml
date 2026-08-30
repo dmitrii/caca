@@ -2,12 +2,7 @@
 # Source: CoveredCA 2025 plan year
 
 plan_name: BS Gold 80 Trio HMO
-plan_url: https://apply.coveredca.com/static/lw-enrollment/anon/plan-details/health/jsAXtf4on1_vOitQNqpILHGR0oUlQWN3x8HlzJiFTiM/70285CA804000601
-
 premium: 2740.21
-# subsidy: example premium subsidy (e.g. an ACA advance premium tax credit).
-# Net premium you pay = premium - subsidy; run with --gross to ignore it.
-# See the "Subsidies" section of the README.
 subsidy: 1612
 
 deductible_individual: 0

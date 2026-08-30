@@ -74,72 +74,23 @@ Validate all data files without running a simulation:
 make validate    # or: .venv/bin/caca validate plans/ profiles/ costs/ examples/
 ```
 
-## Repository layout
+## Subsidies
 
-```
-caca/         simulator source
-plans/2026/   plan definitions (one YAML per plan)
-profiles/     usage profiles (one YAML per person-scenario)
-costs/        billed-cost tables
-parameters/   simulation settings
-examples/     runnable run-configurations
-docs/         design notes and reference plan documents
-tests/        test suite
-```
+`subsidy` is an optional per-plan monthly amount a third party pays toward the
+premium (an employer contribution, or an ACA advance premium tax credit). By
+default the report shows **what you pay** (`premium − subsidy`); the `--gross`
+flag prices every plan at its **full premium**, which is the right lens for
+comparing list prices, or for a COBRA / subsidy-lapse scenario. The report
+header states which lens is active.
 
 ## Making changes
 
-### Adding or editing a plan
+The easiest way to model your own situation is to **copy the files in
+`examples/` and `profiles/` that best match it and edit the copies** — start from
+`examples/basic-run.yaml` (one person) or `examples/calzones-full.yaml` (a
+family), and the profiles they reference.
 
-Each file in `plans/2026/` is one plan. Money fields are **monthly** where noted;
-cost-sharing fields accept three forms:
-
-- a number **≤ 1.0** → **coinsurance** (a fraction, e.g. `0.2` = 20%)
-- a number **> 1.0** → a flat **copay** in dollars (e.g. `45`)
-- a mapping `{ copay: N, coinsurance: M }` → **both** (you pay the copay plus
-  coinsurance on the remainder, capped at the billed amount)
-
-You may also write `"30%"` for coinsurance or `"$45"` for a copay. Every service
-has a base value and an `_after_deductible` value (they're often equal for
-copay-based plans).
-
-```yaml
-plan_name: Example Silver PPO
-premium: 500                 # monthly; annualized as x12
-subsidy: 0                   # optional monthly premium help (employer/APTC); default 0
-
-deductible_individual: 2000
-deductible_family: 4000
-oop_max_individual: 8000
-oop_max_family: 16000
-# optional: deductible_rx_individual/family, oop_max_rx_individual/family,
-#           oop_max_per_rx, deductible_model
-
-preventative_visit: 0
-primary_care_visit: 30
-specialist_visit: 60
-labs: 0.2                              # 20% coinsurance
-imaging: 250
-outpatient_services: 0.3
-outpatient_rehabilitation_services: 40
-inpatient_services: 0.3
-emergency_room: { copay: 250, coinsurance: 0.10 }
-urgent_care: 40
-tier_1_generic_drugs: 15
-tier_2_preferred_brand_drugs: 50
-tier_3_non_preferred_brand_drugs: 90
-tier_4_specialty_drugs: 0.2
-
-# ...and each of the above again with an `_after_deductible` suffix.
-```
-
-The 14 recognized services are: `preventative_visit`, `primary_care_visit`,
-`specialist_visit`, `labs`, `imaging`, `outpatient_services`,
-`outpatient_rehabilitation_services`, `inpatient_services`, `emergency_room`,
-`urgent_care`, and drug tiers 1–4 (`tier_1_generic_drugs` …
-`tier_4_specialty_drugs`).
-
-### Adding or editing a profile (a person's assumptions)
+### Editing personal details (a person's usage)
 
 Each file in `profiles/` describes **one person's expected usage for a year**. A
 profile has a `name` and one entry per service. Each entry is a *number of
@@ -187,14 +138,55 @@ Profiles ship in three intensities (`-minimal`, `-middle`, `-full`) so you can
 model a light, typical, or heavy year. A run-config lists the same profile file
 more than once for multiple similar people (names are auto-numbered).
 
-## Subsidies
+### Adding or editing a plan
 
-`subsidy` is an optional per-plan monthly amount a third party pays toward the
-premium (an employer contribution, or an ACA advance premium tax credit). By
-default the report shows **what you pay** (`premium − subsidy`); the `--gross`
-flag prices every plan at its **full premium**, which is the right lens for
-comparing list prices, or for a COBRA / subsidy-lapse scenario. The report
-header states which lens is active.
+Each file in `plans/2026/` is one plan. The `premium` (and optional `subsidy`)
+are **monthly**; cost-sharing fields accept three forms:
+
+- a number **≤ 1.0** → **coinsurance** (a fraction, e.g. `0.2` = 20%)
+- a number **> 1.0** → a flat **copay** in dollars (e.g. `45`)
+- a mapping `{ copay: N, coinsurance: M }` → **both** (you pay the copay plus
+  coinsurance on the remainder, capped at the billed amount)
+
+You may also write `"30%"` for coinsurance or `"$45"` for a copay. Every service
+has a base value and an `_after_deductible` value (they're often equal for
+copay-based plans).
+
+```yaml
+plan_name: Example Silver PPO
+premium: 500                 # monthly
+subsidy: 0                   # optional monthly premium help; default 0
+
+deductible_individual: 2000
+deductible_family: 4000
+oop_max_individual: 8000
+oop_max_family: 16000
+# optional: deductible_rx_individual/family, oop_max_rx_individual/family,
+#           oop_max_per_rx, deductible_model
+
+preventative_visit: 0
+primary_care_visit: 30
+specialist_visit: 60
+labs: 0.2                              # 20% coinsurance
+imaging: 250
+outpatient_services: 0.3
+outpatient_rehabilitation_services: 40
+inpatient_services: 0.3
+emergency_room: { copay: 250, coinsurance: 0.10 }
+urgent_care: 40
+tier_1_generic_drugs: 15
+tier_2_preferred_brand_drugs: 50
+tier_3_non_preferred_brand_drugs: 90
+tier_4_specialty_drugs: 0.2
+
+# ...and each of the above again with an `_after_deductible` suffix.
+```
+
+The 14 recognized services are: `preventative_visit`, `primary_care_visit`,
+`specialist_visit`, `labs`, `imaging`, `outpatient_services`,
+`outpatient_rehabilitation_services`, `inpatient_services`, `emergency_room`,
+`urgent_care`, and drug tiers 1–4 (`tier_1_generic_drugs` …
+`tier_4_specialty_drugs`).
 
 ## Testing
 
@@ -220,6 +212,19 @@ The model deliberately simplifies real plans. Notable gaps:
 ## Roadmap
 
 - A web UI (design notes in `docs/plans/`; dependencies are already declared).
+
+## Repository layout
+
+```
+caca/         simulator source
+plans/2026/   plan definitions (one YAML per plan)
+profiles/     usage profiles (one YAML per person-scenario)
+costs/        billed-cost tables
+parameters/   simulation settings
+examples/     runnable run-configurations
+docs/         design notes and reference plan documents
+tests/        test suite
+```
 
 ## License
 

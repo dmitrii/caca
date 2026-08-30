@@ -1,10 +1,8 @@
-# PURPOSE: BS Silver 70 PPO plan parameters
+# Blue Shield Silver 70 PPO
+# Source: CoveredCA 2025 plan year
 
 plan_name: BS Silver 70 PPO
 premium: 2861.94
-# subsidy: example premium subsidy (e.g. an ACA advance premium tax credit).
-# Net premium you pay = premium - subsidy; run with --gross to ignore it.
-# See the "Subsidies" section of the README.
 subsidy: 1612
 deductible_individual: 5200
 deductible_family: 10400

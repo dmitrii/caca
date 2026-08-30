@@ -2,13 +2,7 @@
 # Source: CoveredCA 2025 plan year
 
 plan_name: BS Bronze 60 HDHP PPO
-plan_url: https://apply.coveredca.com/static/lw-enrollment/anon/plan-details/health/jsAXtf4on1_vOitQNqpILHGR0oUlQWN3x8HlzJiFTiM/70285CA132000101
-
-# Monthly premium (annual = $27,675.48)
 premium: 2306.29
-# subsidy: example premium subsidy (e.g. an ACA advance premium tax credit).
-# Net premium you pay = premium - subsidy; run with --gross to ignore it.
-# See the "Subsidies" section of the README.
 subsidy: 1612
 
 # Deductibles
